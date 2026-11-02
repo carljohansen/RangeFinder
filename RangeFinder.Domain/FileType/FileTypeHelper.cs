@@ -29,4 +29,9 @@ public static class FileTypeHelper
     {
         return KnownBinaryFileExtensions.Contains(fileExtension.ToLower());
     }
+
+    extension(FileDisplay fileDisplay)
+    {
+        public bool IsKnownTextFile() => IsKnownTextFile(fileDisplay.GetFileExtension());
+    }
 }

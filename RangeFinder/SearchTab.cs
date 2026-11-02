@@ -13,6 +13,8 @@ namespace RangeFinder;
 
 public partial class SearchTab : UserControl
 {
+    private readonly Brush[] _brushes = [.. new[] { Color.Black, Color.Orange, Color.Purple, Color.CornflowerBlue, Color.DarkKhaki, Color.Green }.Select(c => new SolidBrush(c))];
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int Index { get; init; }
 
@@ -20,7 +22,7 @@ public partial class SearchTab : UserControl
 
     private readonly FileSearch _currentSearch;
 
-    private readonly Brush[] _brushes = [.. new[] { Color.Black, Color.Orange, Color.Purple, Color.CornflowerBlue, Color.DarkKhaki, Color.Green }.Select(c => new SolidBrush(c))];
+    private TextFilePreviewMode _currentTextFilePreviewMode;
 
     private int contextMenuRowIndex = -1;
 
@@ -72,6 +74,8 @@ public partial class SearchTab : UserControl
                 grdResult.Columns[i].Width = settings.ColumnWidths[i];
             }
         }
+
+        SetPreviewMode(settings.TextFilePreviewMode);
 
         _hasInitializedFromUserPrefs = true;
     }
@@ -139,7 +143,8 @@ public partial class SearchTab : UserControl
             Id = Index,
             ResultSortOrder = _currentSearch.DataTable.DefaultView.Sort,
             SplitterDistance = spltResultPanel.SplitterDistance,
-            ColumnWidths = [.. grdResult.ColumnsEnumerable().Select(c => c.Width)]
+            ColumnWidths = [.. grdResult.ColumnsEnumerable().Select(c => c.Width)],
+            TextFilePreviewMode = _currentTextFilePreviewMode
         };
     }
 
@@ -242,18 +247,20 @@ public partial class SearchTab : UserControl
 
         if (searchDto.HasTextSearch())
         {
+            btnShowMatchPreview.Enabled = true;
             if (spltResultPanel.Panel2Collapsed)
             {
-                spltResultPanel.Panel2Collapsed = false;
+                SetPreviewMode(TextFilePreviewMode.MatchPreview);
                 spltResultPanel.FixedPanel = FixedPanel.Panel2;
                 ResizeResultsGrid();
             }
         }
         else
         {
+            btnShowMatchPreview.Enabled = false;
             if (!spltResultPanel.Panel2Collapsed)
             {
-                spltResultPanel.Panel2Collapsed = true;
+                SetPreviewMode(TextFilePreviewMode.None);
                 ResizeResultsGrid();
             }
         }
@@ -617,6 +624,12 @@ public partial class SearchTab : UserControl
 
         lstTextMatches.Items.Clear();
         _priorContextWindow.Clear();
+
+        if (!fileDisplay.IsKnownTextFile())
+        {
+            return;
+        }
+
         var lineCount = 0;
         _currentSearch.GetMatches(fileDisplay.FullPath, _currentTextFilePreviewMode, e =>
         {
@@ -1054,8 +1067,6 @@ public partial class SearchTab : UserControl
         recycleBin.MoveHere(path);
     }
 
-    private TextFilePreviewMode _currentTextFilePreviewMode;
-
     private void btnShowMatchPreview_Click(object sender, EventArgs e)
     {
         if (_currentTextFilePreviewMode == TextFilePreviewMode.MatchPreview)
@@ -1063,8 +1074,7 @@ public partial class SearchTab : UserControl
             return;
         }
 
-        _currentTextFilePreviewMode = TextFilePreviewMode.MatchPreview;
-        spltResultPanel.Panel2Collapsed = false;
+        SetPreviewMode(TextFilePreviewMode.MatchPreview);
         HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
     }
 
@@ -1075,14 +1085,18 @@ public partial class SearchTab : UserControl
             return;
         }
 
-        _currentTextFilePreviewMode = TextFilePreviewMode.FullPreview;
-        spltResultPanel.Panel2Collapsed = false;
+        SetPreviewMode(TextFilePreviewMode.FullPreview);
         HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
     }
 
     private void btnHidePreview_Click(object sender, EventArgs e)
     {
-        _currentTextFilePreviewMode = TextFilePreviewMode.None;
-        spltResultPanel.Panel2Collapsed = true;
+        SetPreviewMode(TextFilePreviewMode.None);
+    }
+
+    private void SetPreviewMode(TextFilePreviewMode mode)
+    {
+        _currentTextFilePreviewMode = mode;
+        spltResultPanel.Panel2Collapsed = _currentTextFilePreviewMode == TextFilePreviewMode.None;
     }
 }

@@ -97,7 +97,7 @@ namespace RangeFinder
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(20, 142);
+            btnSearch.Location = new Point(20, 138);
             btnSearch.Margin = new Padding(3, 2, 3, 2);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(82, 24);
@@ -260,7 +260,7 @@ namespace RangeFinder
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(5, 119);
+            label3.Location = new Point(5, 114);
             label3.Name = "label3";
             label3.Size = new Size(49, 15);
             label3.TabIndex = 6;
@@ -445,7 +445,7 @@ namespace RangeFinder
             // btnCancelSearch
             // 
             btnCancelSearch.Enabled = false;
-            btnCancelSearch.Location = new Point(108, 142);
+            btnCancelSearch.Location = new Point(108, 138);
             btnCancelSearch.Margin = new Padding(3, 2, 3, 2);
             btnCancelSearch.Name = "btnCancelSearch";
             btnCancelSearch.Size = new Size(82, 24);
@@ -457,7 +457,7 @@ namespace RangeFinder
             // chkFilterByDate
             // 
             chkFilterByDate.AutoSize = true;
-            chkFilterByDate.Location = new Point(369, 146);
+            chkFilterByDate.Location = new Point(369, 142);
             chkFilterByDate.Margin = new Padding(3, 2, 3, 2);
             chkFilterByDate.Name = "chkFilterByDate";
             chkFilterByDate.Size = new Size(128, 19);
@@ -468,7 +468,7 @@ namespace RangeFinder
             // 
             // txtDateFilterAmount
             // 
-            txtDateFilterAmount.Location = new Point(509, 144);
+            txtDateFilterAmount.Location = new Point(509, 140);
             txtDateFilterAmount.Margin = new Padding(3, 2, 3, 2);
             txtDateFilterAmount.Name = "txtDateFilterAmount";
             txtDateFilterAmount.Size = new Size(38, 23);
@@ -481,7 +481,7 @@ namespace RangeFinder
             cmbDateFilterAmountType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDateFilterAmountType.FormattingEnabled = true;
             cmbDateFilterAmountType.Items.AddRange(new object[] { "hours", "days", "weeks", "months", "years" });
-            cmbDateFilterAmountType.Location = new Point(552, 142);
+            cmbDateFilterAmountType.Location = new Point(552, 138);
             cmbDateFilterAmountType.Margin = new Padding(3, 2, 3, 2);
             cmbDateFilterAmountType.Name = "cmbDateFilterAmountType";
             cmbDateFilterAmountType.Size = new Size(75, 23);
@@ -491,7 +491,7 @@ namespace RangeFinder
             // 
             cmbRootDir.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cmbRootDir.FormattingEnabled = true;
-            cmbRootDir.Location = new Point(67, 117);
+            cmbRootDir.Location = new Point(67, 112);
             cmbRootDir.Margin = new Padding(3, 2, 3, 2);
             cmbRootDir.Name = "cmbRootDir";
             cmbRootDir.Size = new Size(807, 23);
@@ -504,7 +504,7 @@ namespace RangeFinder
             // chkShowHidden
             // 
             chkShowHidden.AutoSize = true;
-            chkShowHidden.Location = new Point(649, 147);
+            chkShowHidden.Location = new Point(649, 143);
             chkShowHidden.Name = "chkShowHidden";
             chkShowHidden.Size = new Size(106, 19);
             chkShowHidden.TabIndex = 104;
