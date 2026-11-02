@@ -84,6 +84,7 @@ namespace RangeFinder
             buttonImageList = new ImageList(components);
             btnShowFullPreview = new Button();
             btnHidePreview = new Button();
+            mainToolTip = new ToolTip(components);
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -281,7 +282,6 @@ namespace RangeFinder
             // spltResultPanel.Panel2
             // 
             spltResultPanel.Panel2.Controls.Add(lstTextMatches);
-            spltResultPanel.Panel2.Resize += spltResultPanel_Panel2_Resize;
             spltResultPanel.Size = new Size(874, 196);
             spltResultPanel.SplitterDistance = 621;
             spltResultPanel.TabIndex = 101;
@@ -564,6 +564,7 @@ namespace RangeFinder
             btnShowMatchPreview.Name = "btnShowMatchPreview";
             btnShowMatchPreview.Size = new Size(25, 25);
             btnShowMatchPreview.TabIndex = 106;
+            mainToolTip.SetToolTip(btnShowMatchPreview, "Show Matching Text Preview");
             btnShowMatchPreview.UseVisualStyleBackColor = true;
             btnShowMatchPreview.Click += btnShowMatchPreview_Click;
             // 
@@ -585,6 +586,7 @@ namespace RangeFinder
             btnShowFullPreview.Name = "btnShowFullPreview";
             btnShowFullPreview.Size = new Size(25, 25);
             btnShowFullPreview.TabIndex = 107;
+            mainToolTip.SetToolTip(btnShowFullPreview, "Show Full Text Preview");
             btnShowFullPreview.UseVisualStyleBackColor = true;
             btnShowFullPreview.Click += btnShowFullPreview_Click;
             // 
@@ -598,6 +600,7 @@ namespace RangeFinder
             btnHidePreview.Name = "btnHidePreview";
             btnHidePreview.Size = new Size(25, 25);
             btnHidePreview.TabIndex = 108;
+            mainToolTip.SetToolTip(btnHidePreview, "Hide Preview Pane");
             btnHidePreview.UseVisualStyleBackColor = true;
             btnHidePreview.Click += btnHidePreview_Click;
             // 
@@ -699,5 +702,6 @@ namespace RangeFinder
         private ImageList buttonImageList;
         private Button btnShowFullPreview;
         private Button btnHidePreview;
+        private ToolTip mainToolTip;
     }
 }

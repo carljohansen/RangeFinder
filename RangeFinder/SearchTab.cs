@@ -651,8 +651,6 @@ public partial class SearchTab : UserControl
 
     private void SearchTab_Load(object sender, EventArgs e)
     {
-        Debug.WriteLine($"SearchTab_Load: Width={this.Width}, Height={this.Height}");
-
         _parent = (this.Parent!.Parent!.Parent as SearchForm)!;
 
         ColumnHeader lineNumberHeader = new()
@@ -921,7 +919,6 @@ public partial class SearchTab : UserControl
 
     private void spltResultPanel_Panel1_Resize(object sender, EventArgs e)
     {
-        Debug.WriteLine($"spltResultPanel_Panel1_Resize: Index={Index}, Width={spltResultPanel.Panel1.Width}");
         ResizeResultsGrid();
     }
 
@@ -934,8 +931,6 @@ public partial class SearchTab : UserControl
 
         var newWidth = spltResultPanel.Panel1.Width - (SystemInformation.VerticalScrollBarWidth + 5);
         grdResult.ResizeResultsGrid(newWidth);
-
-        Debug.WriteLine($"ResizeResultsGrid: Index={Index}, current panel Width={spltResultPanel.Panel1.Width}");
 
         if (!_hasInitializedFromUserPrefs)
         {
@@ -953,7 +948,6 @@ public partial class SearchTab : UserControl
         {
             RefreshLocationDisplayStringsAfterColumnResize();
         }
-        Debug.WriteLine($"grdResult_ColumnWidthChanged: Index={Index}, Column={e.Column.Name}, NewWidth={e.Column.Width}");
     }
 
     private void RefreshLocationDisplayStringsAfterColumnResize()
@@ -1023,7 +1017,6 @@ public partial class SearchTab : UserControl
 
     private void SearchTab_Resize(object sender, EventArgs e)
     {
-        Debug.WriteLine($"SearchTab_Resize:  Index={Index}, Width={this.Width}, Height={this.Height}");
         AnchorByHand();
     }
 
@@ -1059,11 +1052,6 @@ public partial class SearchTab : UserControl
         var recycleBin = shellApp.Namespace(0xa);
 
         recycleBin.MoveHere(path);
-    }
-
-    private void spltResultPanel_Panel2_Resize(object sender, EventArgs e)
-    {
-        Debug.WriteLine($"spltResultPanel_Panel2_Resize: Index={Index}, Width={spltResultPanel.Panel2.Width}");
     }
 
     private TextFilePreviewMode _currentTextFilePreviewMode;
