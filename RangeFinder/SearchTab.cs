@@ -589,7 +589,12 @@ public partial class SearchTab : UserControl
 
     private void grdResult_RowEnter(object sender, DataGridViewCellEventArgs e)
     {
-        if (e.RowIndex < 0)
+        HandleGridRowEnter(e.RowIndex);
+    }
+
+    private void HandleGridRowEnter(int rowIndex)
+    {
+        if (rowIndex < 0)
         {
             return;
         }
@@ -599,7 +604,12 @@ public partial class SearchTab : UserControl
             return;
         }
 
-        var fileDisplay = GetRowFileDisplay(e.RowIndex);
+        if (_currentTextFilePreviewMode == TextFilePreviewMode.None)
+        {
+            return;
+        }
+
+        var fileDisplay = GetRowFileDisplay(rowIndex);
         if (fileDisplay == null)
         {
             return;
@@ -607,11 +617,24 @@ public partial class SearchTab : UserControl
 
         lstTextMatches.Items.Clear();
         _priorContextWindow.Clear();
-        _currentSearch.GetMatches(fileDisplay.FullPath, match =>
+        var lineCount = 0;
+        _currentSearch.GetMatches(fileDisplay.FullPath, _currentTextFilePreviewMode, e =>
         {
-            if (!match.HasMatches)
+            if (!e.FileLineDisplay.HasMatches)
             {
-                _priorContextWindow.Add(match);
+                if (_currentTextFilePreviewMode == TextFilePreviewMode.FullPreview)
+                {
+                    var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
+                    nonMatchItem.Tag = e.FileLineDisplay;
+                    lineCount++;
+                    if (lineCount >= 500)
+                    {
+                        e.Cancel = true;
+                    }
+                    return;
+                }
+
+                _priorContextWindow.Add(e.FileLineDisplay);
                 return;
             }
 
@@ -622,7 +645,7 @@ public partial class SearchTab : UserControl
                 priorListItem.Tag = priorItem;
             }
             var newItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
-            newItem.Tag = match;
+            newItem.Tag = e.FileLineDisplay;
         });
     }
 
@@ -842,7 +865,7 @@ public partial class SearchTab : UserControl
         var currPath = cmbRootDir.Text;
 
         var possibleContinuations = TextCriterionHistoryCollection.Instance.BaseDirHistory.GetPossibleContinuations(currPath);
-        
+
         cmbRootDir.PopulateDropdown(TextCriterionHistoryCollection.Instance.BaseDirHistory, possibleContinuations);
     }
 
@@ -898,6 +921,7 @@ public partial class SearchTab : UserControl
 
     private void spltResultPanel_Panel1_Resize(object sender, EventArgs e)
     {
+        Debug.WriteLine($"spltResultPanel_Panel1_Resize: Index={Index}, Width={spltResultPanel.Panel1.Width}");
         ResizeResultsGrid();
     }
 
@@ -911,7 +935,7 @@ public partial class SearchTab : UserControl
         var newWidth = spltResultPanel.Panel1.Width - (SystemInformation.VerticalScrollBarWidth + 5);
         grdResult.ResizeResultsGrid(newWidth);
 
-        Debug.WriteLine($"ResizeResultsGrid: newWidth={newWidth}, grdResult.Width={grdResult.Width}, spltResultPanel.Panel1.Width={spltResultPanel.Panel1.Width}");
+        Debug.WriteLine($"ResizeResultsGrid: Index={Index}, current panel Width={spltResultPanel.Panel1.Width}");
 
         if (!_hasInitializedFromUserPrefs)
         {
@@ -929,6 +953,7 @@ public partial class SearchTab : UserControl
         {
             RefreshLocationDisplayStringsAfterColumnResize();
         }
+        Debug.WriteLine($"grdResult_ColumnWidthChanged: Index={Index}, Column={e.Column.Name}, NewWidth={e.Column.Width}");
     }
 
     private void RefreshLocationDisplayStringsAfterColumnResize()
@@ -998,7 +1023,7 @@ public partial class SearchTab : UserControl
 
     private void SearchTab_Resize(object sender, EventArgs e)
     {
-        Debug.WriteLine($"SearchTab_Resize: Width={this.Width}, Height={this.Height}");
+        Debug.WriteLine($"SearchTab_Resize:  Index={Index}, Width={this.Width}, Height={this.Height}");
         AnchorByHand();
     }
 
@@ -1034,5 +1059,42 @@ public partial class SearchTab : UserControl
         var recycleBin = shellApp.Namespace(0xa);
 
         recycleBin.MoveHere(path);
+    }
+
+    private void spltResultPanel_Panel2_Resize(object sender, EventArgs e)
+    {
+        Debug.WriteLine($"spltResultPanel_Panel2_Resize: Index={Index}, Width={spltResultPanel.Panel2.Width}");
+    }
+
+    private TextFilePreviewMode _currentTextFilePreviewMode;
+
+    private void btnShowMatchPreview_Click(object sender, EventArgs e)
+    {
+        if (_currentTextFilePreviewMode == TextFilePreviewMode.MatchPreview)
+        {
+            return;
+        }
+
+        _currentTextFilePreviewMode = TextFilePreviewMode.MatchPreview;
+        spltResultPanel.Panel2Collapsed = false;
+        HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
+    }
+
+    private void btnShowFullPreview_Click(object sender, EventArgs e)
+    {
+        if (_currentTextFilePreviewMode == TextFilePreviewMode.FullPreview)
+        {
+            return;
+        }
+
+        _currentTextFilePreviewMode = TextFilePreviewMode.FullPreview;
+        spltResultPanel.Panel2Collapsed = false;
+        HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
+    }
+
+    private void btnHidePreview_Click(object sender, EventArgs e)
+    {
+        _currentTextFilePreviewMode = TextFilePreviewMode.None;
+        spltResultPanel.Panel2Collapsed = true;
     }
 }

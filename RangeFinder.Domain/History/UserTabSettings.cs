@@ -1,4 +1,6 @@
-﻿namespace RangeFinder.Domain.History;
+﻿using RangeFinder.Domain.TextSearch;
+
+namespace RangeFinder.Domain.History;
 
 public class UserTabSettings
 {
@@ -10,12 +12,15 @@ public class UserTabSettings
 
     public required List<int> ColumnWidths { get; set; }
 
+    public TextFilePreviewMode TextFilePreviewMode { get; set; }
+
     public static UserTabSettings CreateDefault() => new()
     {
         Id = 0,
         ResultSortOrder = null,
         SplitterDistance = null,
-        ColumnWidths = []
+        ColumnWidths = [],
+        TextFilePreviewMode = TextFilePreviewMode.None
     };
 }
 

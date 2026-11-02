@@ -405,9 +405,10 @@ public class FileSearch
         return _currentStatusReportedDirectory!;
     }
 
-    public void GetMatches(string filePath, Action<IFileLineDisplay> matchAction)
+    public void GetMatches(string filePath, TextFilePreviewMode mode, Action<PreviewLineGeneratedEventArgs> matchAction)
     {
-        if (TextSearches.Count == 0)
+        if (TextSearches.Count == 0
+            && mode == TextFilePreviewMode.MatchPreview)
         {
             return;
         }

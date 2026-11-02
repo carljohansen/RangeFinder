@@ -31,7 +31,7 @@ public class FileMatcher
         return Path.Combine(baseDirectory, filePath);
     }
 
-    public void GetMatches(string filePath, Action<IFileLineDisplay> matchAction, int max = 200)
+    public void GetMatches(string filePath, Action<PreviewLineGeneratedEventArgs> matchAction, int max = 200)
     {
         var numMatchingLinesFound = 0;
 
@@ -40,6 +40,7 @@ public class FileMatcher
 
         foreach (var line in File.ReadLines(fullPath))
         {
+            PreviewLineGeneratedEventArgs? e = null;
             lineNumber++;
             var lineHasMatch = false;
             foreach (var matcher in Matchers)
@@ -47,7 +48,8 @@ public class FileMatcher
                 var match = matcher.GetMatch(line, lineNumber);
                 if (match != null)
                 {
-                    matchAction(match);
+                    e = new(match);
+                    matchAction(e);
                     lineHasMatch = true;
                 }
             }
@@ -62,7 +64,13 @@ public class FileMatcher
             }
             else
             {
-                matchAction(new FileLinePlainPreview(line, lineNumber));
+                e = new(new FileLinePlainPreview(line, lineNumber));
+                matchAction(e);
+            }
+
+            if (e?.Cancel == true)
+            {
+                break;
             }
         }
     }
