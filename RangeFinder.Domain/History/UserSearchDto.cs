@@ -2,7 +2,7 @@
 
 namespace RangeFinder.Domain.History;
 
-public class UserSearchDto
+public class UserSearchDto : IEquatable<UserSearchDto>
 {
     public static string NormalizeDirectoryName(string directoryName)
     {
@@ -124,7 +124,7 @@ public class UserSearchDto
 
     public bool IsValidBaseDir()
     {
-        return !string.IsNullOrWhiteSpace(BaseDirectoriesPattern) 
+        return !string.IsNullOrWhiteSpace(BaseDirectoriesPattern)
                && Directory.Exists(GetNormalizedBaseDirectory());
     }
 
@@ -242,5 +242,28 @@ public class UserSearchDto
 
         var visibleLength = Math.Max(0, maxLength - ellipsis.Length);
         return str[..visibleLength] + ellipsis;
+    }
+
+    public bool Equals(UserSearchDto? other)
+    {
+        if (other == null) return false;
+        return BaseDirectoriesPattern == other.BaseDirectoriesPattern
+               && RawIncludeFilesPattern == other.RawIncludeFilesPattern
+               && RawExcludeFilesPattern == other.RawExcludeFilesPattern
+               && EnableFileExclusion == other.EnableFileExclusion
+               && IncludeFolders == other.IncludeFolders
+               && FilterByModifiedDate == other.FilterByModifiedDate
+               && ModifiedInLastQuantity == other.ModifiedInLastQuantity
+               && ModifiedInLastQuantityType == other.ModifiedInLastQuantityType
+               && ModifiedBefore == other.ModifiedBefore
+               && TextSearchPattern == other.TextSearchPattern
+               && TextMatchingOptions == other.TextMatchingOptions;
+    }
+
+    public override bool Equals(object? obj) => Equals(obj as UserSearchDto);
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode(); // Hmm... not really a good idea.
     }
 }
