@@ -235,6 +235,7 @@ public partial class SearchTab : UserControl
         }
 
         SetStatusText("Searching...");
+        var gridTotalWidthBeforeSearch = ResultGridTotalWidth();
         btnSearch.Enabled = false;
         btnCancelSearch.Enabled = true;
         _isSearchInProgress = true;
@@ -296,6 +297,11 @@ public partial class SearchTab : UserControl
 
         PopulateHistoryDropdowns();
 
+        if (ResultGridTotalWidth() != gridTotalWidthBeforeSearch)
+        {
+            ResizeResultsGrid();
+        }
+
         btnSearch.Enabled = true;
         btnCancelSearch.Enabled = false;
 
@@ -311,6 +317,8 @@ public partial class SearchTab : UserControl
         lblFilesFound.Text = searchOutcome?.GetFilesFoundDisplay();
         RaiseFilesFoundUpdate(searchStatus: searchOutcome?.FinalState ?? FileSearchStatus.Failed);
     }
+
+    private int ResultGridTotalWidth() => grdResult.ColumnsEnumerable().Sum(c => c.Width);
 
     private void CollapseDropdowns()
     {
