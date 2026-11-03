@@ -473,51 +473,6 @@ public partial class SearchTab : UserControl
         using var _ = Process.Start("explorer.exe", folderPath);
     }
 
-    private void mnuSearchHere_Click(object sender, EventArgs e)
-    {
-        mnuFileItemContext.Hide();
-
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
-
-        var selectedFilePath = selectedFileDisplay.FullPath;
-        if (selectedFilePath == null
-            || !selectedFileDisplay.Exists())
-        {
-            return;
-        }
-
-        var containingFolder = selectedFileDisplay.GetDirectoryName();
-        if (containingFolder != null)
-        {
-            cmbRootDir.Text = containingFolder;
-            cmbRootDir.FocusWithEndCursor();
-        }
-    }
-
-    private void mnuSearchHereInNewTab_Click(object sender, EventArgs e)
-    {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
-
-        var selectedFilePath = selectedFileDisplay.FullPath;
-        if (selectedFilePath == null
-            || !selectedFileDisplay.Exists())
-        {
-            return;
-        }
-
-        var containingFolder = selectedFileDisplay.GetDirectoryName();
-        if (containingFolder != null)
-        {
-            var currentState = GetCurrentTabState();
-            currentState.SearchDto.BaseDirectoriesPattern = containingFolder;
-            _parent.AddNewTab(currentState);
-        }
-    }
-
     private void mnuOpenWithTextEditor_Click(object sender, EventArgs e)
     {
         var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
@@ -1098,5 +1053,77 @@ public partial class SearchTab : UserControl
     {
         _currentTextFilePreviewMode = mode;
         spltResultPanel.Panel2Collapsed = _currentTextFilePreviewMode == TextFilePreviewMode.None;
+    }
+
+    private void mnuUseAsBaseDir_Click(object sender, EventArgs e)
+    {
+        mnuFileItemContext.Hide();
+
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+
+        var selectedFilePath = selectedFileDisplay.FullPath;
+        if (selectedFilePath == null
+            || !selectedFileDisplay.Exists())
+        {
+            return;
+        }
+
+        var containingFolder = selectedFileDisplay.GetDirectoryName();
+        if (containingFolder != null)
+        {
+            cmbRootDir.Text = containingFolder;
+            cmbRootDir.FocusWithEndCursor();
+        }
+    }
+
+    private void mnuUseAsBaseDirNewTab_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+
+        var selectedFilePath = selectedFileDisplay.FullPath;
+        if (selectedFilePath == null
+            || !selectedFileDisplay.Exists())
+        {
+            return;
+        }
+
+        var containingFolder = selectedFileDisplay.GetDirectoryName();
+        if (containingFolder != null)
+        {
+            var currentState = GetCurrentTabState();
+            currentState.SearchDto.BaseDirectoriesPattern = containingFolder;
+            _parent.AddNewTab(currentState);
+        }
+    }
+
+    private void mnuUseAsExcept_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+
+        var folderToExclude = selectedFileDisplay.Attributes.HasFlag(FileAttributes.Directory)
+                                ? selectedFileDisplay.FullPath
+                                : selectedFileDisplay.Location.Location;
+        var exclusionsPlusNew = _currentSearch.SearchCriteria?.AddFolderExclusion(folderToExclude, cmbExceptFilePattern.Text);
+        if (exclusionsPlusNew != null)
+        {
+            cmbExceptFilePattern.Text = exclusionsPlusNew;
+            chkEnableExclusions.Checked = true;
+        }
+    }
+
+    private void mnuUseAsFileName_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+
+        var fileName = Path.GetFileName(selectedFileDisplay.FullPath);
+        cmbFilePattern.Text = fileName;
     }
 }

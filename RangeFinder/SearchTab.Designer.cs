@@ -46,9 +46,14 @@ namespace RangeFinder
             mnuCopyFiles = new ToolStripMenuItem();
             mnuDeleteItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
-            mnuSearchHere = new ToolStripMenuItem();
-            mnuSearchHereInNewTab = new ToolStripMenuItem();
-            mnuExcludeThisFolder = new ToolStripMenuItem();
+            mnuUseAsCriterion = new ToolStripMenuItem();
+            mnuUseAsFileName = new ToolStripMenuItem();
+            mnuUseAsExcept = new ToolStripMenuItem();
+            mnuUseAsBaseDir = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            mnuUseAsFileNameNewTb = new ToolStripMenuItem();
+            mnuUseAsExceptNewTab = new ToolStripMenuItem();
+            mnuUseAsBaseDirNewTab = new ToolStripMenuItem();
             chkMatchCase = new CheckBox();
             chkMatchWholeWord = new CheckBox();
             label1 = new Label();
@@ -128,7 +133,7 @@ namespace RangeFinder
             // mnuFileItemContext
             // 
             mnuFileItemContext.ImageScalingSize = new Size(20, 20);
-            mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuSearchHere, mnuExcludeThisFolder });
+            mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuUseAsCriterion });
             mnuFileItemContext.Name = "mnuFileItemContext";
             mnuFileItemContext.Size = new Size(194, 214);
             // 
@@ -193,27 +198,57 @@ namespace RangeFinder
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(190, 6);
             // 
-            // mnuSearchHere
+            // mnuUseAsCriterion
             // 
-            mnuSearchHere.DropDownItems.AddRange(new ToolStripItem[] { mnuSearchHereInNewTab });
-            mnuSearchHere.Name = "mnuSearchHere";
-            mnuSearchHere.Size = new Size(193, 22);
-            mnuSearchHere.Text = "Search This Folder...";
-            mnuSearchHere.Click += mnuSearchHere_Click;
+            mnuUseAsCriterion.DropDownItems.AddRange(new ToolStripItem[] { mnuUseAsFileName, mnuUseAsExcept, mnuUseAsBaseDir, toolStripSeparator3, mnuUseAsFileNameNewTb, mnuUseAsExceptNewTab, mnuUseAsBaseDirNewTab });
+            mnuUseAsCriterion.Name = "mnuUseAsCriterion";
+            mnuUseAsCriterion.Size = new Size(193, 22);
+            mnuUseAsCriterion.Text = "Use As Criterion";
             // 
-            // mnuSearchHereInNewTab
+            // mnuUseAsFileName
             // 
-            mnuSearchHereInNewTab.Name = "mnuSearchHereInNewTab";
-            mnuSearchHereInNewTab.Size = new Size(144, 22);
-            mnuSearchHereInNewTab.Text = "In A New Tab";
-            mnuSearchHereInNewTab.Click += mnuSearchHereInNewTab_Click;
+            mnuUseAsFileName.Name = "mnuUseAsFileName";
+            mnuUseAsFileName.Size = new Size(187, 22);
+            mnuUseAsFileName.Text = "File Name";
+            mnuUseAsFileName.Click += mnuUseAsFileName_Click;
             // 
-            // mnuExcludeThisFolder
+            // mnuUseAsExcept
             // 
-            mnuExcludeThisFolder.Name = "mnuExcludeThisFolder";
-            mnuExcludeThisFolder.Size = new Size(193, 22);
-            mnuExcludeThisFolder.Text = "Exclude This Folder...";
-            mnuExcludeThisFolder.Click += mnuExcludeThisFolder_Click;
+            mnuUseAsExcept.Name = "mnuUseAsExcept";
+            mnuUseAsExcept.Size = new Size(187, 22);
+            mnuUseAsExcept.Text = "Except This Location";
+            mnuUseAsExcept.Click += mnuUseAsExcept_Click;
+            // 
+            // mnuUseAsBaseDir
+            // 
+            mnuUseAsBaseDir.Name = "mnuUseAsBaseDir";
+            mnuUseAsBaseDir.Size = new Size(187, 22);
+            mnuUseAsBaseDir.Text = "Look In This Location";
+            mnuUseAsBaseDir.Click += mnuUseAsBaseDir_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(184, 6);
+            // 
+            // mnuUseAsFileNameNewTb
+            // 
+            mnuUseAsFileNameNewTb.Name = "mnuUseAsFileNameNewTb";
+            mnuUseAsFileNameNewTb.Size = new Size(187, 22);
+            mnuUseAsFileNameNewTb.Text = "File Name (New Tab)";
+            // 
+            // mnuUseAsExceptNewTab
+            // 
+            mnuUseAsExceptNewTab.Name = "mnuUseAsExceptNewTab";
+            mnuUseAsExceptNewTab.Size = new Size(187, 22);
+            mnuUseAsExceptNewTab.Text = "Except (New Tab)";
+            // 
+            // mnuUseAsBaseDirNewTab
+            // 
+            mnuUseAsBaseDirNewTab.Name = "mnuUseAsBaseDirNewTab";
+            mnuUseAsBaseDirNewTab.Size = new Size(187, 22);
+            mnuUseAsBaseDirNewTab.Text = "Look In (New Tab)";
+            mnuUseAsBaseDirNewTab.Click += mnuUseAsBaseDirNewTab_Click;
             // 
             // chkMatchCase
             // 
@@ -676,18 +711,15 @@ namespace RangeFinder
         private ComboBox cmbDateFilterAmountType;
         private PredictiveComboBox cmbRootDir;
         private ToolStripMenuItem mnuCopyFiles;
-        private ToolStripMenuItem mnuSearchHere;
         private ToolStripMenuItem mnuCopyFolderPath;
         private ContextMenuStrip mnuTextMatchContext;
         private ToolStripMenuItem mnuTextMatchLineCopy;
         private CheckBox chkShowHidden;
-        private ToolStripMenuItem mnuExcludeThisFolder;
         private StatusStrip statusStrip1;
         private ToolStripProgressBar TabProgressBar;
         private ToolStripStatusLabel lblTabStatus;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem mnuSearchHereInNewTab;
         private ToolStripStatusLabel lblStatusStripSpring;
         private ToolStripStatusLabel lblFilesFound;
         private ToolStripStatusLabel lblElapsedTime;
@@ -703,5 +735,13 @@ namespace RangeFinder
         private Button btnShowFullPreview;
         private Button btnHidePreview;
         private ToolTip mainToolTip;
+        private ToolStripMenuItem mnuUseAsCriterion;
+        private ToolStripMenuItem mnuUseAsFileName;
+        private ToolStripMenuItem mnuUseAsExcept;
+        private ToolStripMenuItem mnuUseAsBaseDir;
+        private ToolStripMenuItem mnuUseAsFileNameNewTb;
+        private ToolStripMenuItem mnuUseAsExceptNewTab;
+        private ToolStripMenuItem mnuUseAsBaseDirNewTab;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
