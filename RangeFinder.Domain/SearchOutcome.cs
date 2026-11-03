@@ -1,6 +1,6 @@
 ﻿namespace RangeFinder.Domain;
 
-public record SearchOutcome(string StatusMessage, int? NumFilesFound, TimeSpan? ElapsedTime, FileSearchStatus FinalState)
+public record SearchOutcome(string StatusMessage, int? NumFilesFound, bool SearchIncludesFolders, TimeSpan? ElapsedTime, FileSearchStatus FinalState)
 {
     public static string GetElapsedTimeDisplay(TimeSpan? elapsed)
     {
@@ -42,6 +42,7 @@ public record SearchOutcome(string StatusMessage, int? NumFilesFound, TimeSpan? 
         {
             return "No matching files found";
         }
-        return NumFilesFound == 1 ? "1 file" : $"{NumFilesFound:#,##0} files";
+        var itemDesc = SearchIncludesFolders ? "item" : "file";
+        return NumFilesFound == 1 ? $"1 {itemDesc}" : $"{NumFilesFound:#,##0} {itemDesc}s";
     }
 }

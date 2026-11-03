@@ -180,15 +180,15 @@ public partial class SearchTab : UserControl
         }
         SetStatusText(e.StatusMessage);
         SetProgress(e.ProgressPercentage);
-        RaiseFilesFoundUpdate(searchStatus: FileSearchStatus.Running);
+        RaiseFilesFoundUpdate(searchStatus: FileSearchStatus.Running, searchIncludesFolders: _currentSearch.SearchCriteria?.IncludeFolders ?? false);
     }
 
-    private void RaiseFilesFoundUpdate(int? fileCount = null, FileSearchStatus searchStatus = FileSearchStatus.NotRunning)
+    private void RaiseFilesFoundUpdate(int? fileCount = null, bool searchIncludesFolders = false, FileSearchStatus searchStatus = FileSearchStatus.NotRunning)
     {
         if (FilesFoundUpdate != null)
         {
             var countToReport = fileCount ?? grdResult.Rows.Count;
-            FilesFoundUpdate?.Invoke(this, new(countToReport, searchStatus));
+            FilesFoundUpdate?.Invoke(this, new(countToReport, searchIncludesFolders, searchStatus));
         }
     }
 
@@ -241,7 +241,7 @@ public partial class SearchTab : UserControl
         _isSearchInProgress = true;
         CollapseDropdowns();
         SetProgress(0);
-        RaiseFilesFoundUpdate(-1, searchStatus: FileSearchStatus.Running);
+        RaiseFilesFoundUpdate(-1, searchStatus: FileSearchStatus.Running, searchIncludesFolders: searchDto.IncludeFolders);
         lstTextMatches.Items.Clear();
         contextMenuRowIndex = -1;
         _searchCancellationTokenSource = new CancellationTokenSource();
@@ -315,7 +315,7 @@ public partial class SearchTab : UserControl
         lblFilesFound.Visible = true;
         lblElapsedTime.Text = searchOutcome?.GetElapsedTimeDisplay();
         lblFilesFound.Text = searchOutcome?.GetFilesFoundDisplay();
-        RaiseFilesFoundUpdate(searchStatus: searchOutcome?.FinalState ?? FileSearchStatus.Failed);
+        RaiseFilesFoundUpdate(searchIncludesFolders: searchDto.IncludeFolders, searchStatus: searchOutcome?.FinalState ?? FileSearchStatus.Failed);
     }
 
     private int ResultGridTotalWidth() => grdResult.ColumnsEnumerable().Sum(c => c.Width);

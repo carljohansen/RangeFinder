@@ -93,11 +93,11 @@ public class SearchTabPage : TabPage
         }
 
         _lastFileCountShown = e.FilesFound;
-
+        var itemDesc = e.SearchIncludesFolders ? "item" : "file";
         var newTabTitle = e.FilesFound switch
         {
-            1 => "1 file",
-            < 1000 => $"{e.FilesFound} files",
+            1 => $"1 {itemDesc}",
+            < 1000 => $"{e.FilesFound} {itemDesc}s",
             _ => "1000+"
         };
 

@@ -77,7 +77,7 @@ public class FileSearch
 
         if (searchCompletionStatus == FileSearchStatus.UnauthorizedEx)
         {
-            return new SearchOutcome("Encountered inaccessible folder", null, null, FileSearchStatus.UnauthorizedEx);
+            return new SearchOutcome("Encountered inaccessible folder", null, false, null, FileSearchStatus.UnauthorizedEx);
         }
 
         var wasCancelled = searchCompletionStatus == FileSearchStatus.Cancelled;
@@ -89,7 +89,7 @@ public class FileSearch
 
         string finalMessage = wasCancelled ? "Cancelled" : "Done";
 
-        return new SearchOutcome(finalMessage, numMatches, timer.Elapsed, finalState);
+        return new SearchOutcome(finalMessage, numMatches, searchDto.IncludeFolders, timer.Elapsed, finalState);
     }
 
     private async Task<FileSearchStatus> OptimisticSearch(UserSearchDto searchDto,
