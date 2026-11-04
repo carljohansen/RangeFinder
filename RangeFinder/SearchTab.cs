@@ -1101,6 +1101,12 @@ public partial class SearchTab : UserControl
         handler.ApplyToNewTab();
     }
 
+    private void mnuFilterByExtension_Click(object sender, EventArgs e)
+    {
+        var handler = new FilterByExtensionHandler(this);
+        handler.ApplyToCurrentTab();
+    }
+
     private abstract class UseAsCriterionHandlerBase
     {
         protected SearchTab SearchTab;
@@ -1146,6 +1152,23 @@ public partial class SearchTab : UserControl
         {
             var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
             return fileDisplay == null ? null : Path.GetFileName(fileDisplay.FullPath);
+        }
+        protected override void NewTabApplier(string value, UserTabState newTabState)
+        {
+            newTabState.SearchDto.RawIncludeFilesPattern = value;
+        }
+        protected override void CurrentTabApplier(string value)
+        {
+            SearchTab.cmbFilePattern.Text = value;
+        }
+    }
+
+    private class FilterByExtensionHandler(SearchTab searchTab) : UseAsCriterionHandlerBase(searchTab)
+    {
+        protected override string? PropertyRetriever()
+        {
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            return fileDisplay == null ? null : $"*{Path.GetExtension(fileDisplay.FullPath)}";
         }
         protected override void NewTabApplier(string value, UserTabState newTabState)
         {
