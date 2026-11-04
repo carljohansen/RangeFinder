@@ -2,7 +2,15 @@
 
 public class DirectoryTextCriterionHistory : TextCriterionHistory
 {
-    public DirectoryTextCriterionHistory(int maxItems, string? fileName) : base(maxItems, fileName)
+    public static bool CompareDirectoryPaths(string dir1, string dir2)
+    {
+        return string.Equals(
+            Path.GetFullPath(dir1).TrimEnd(Path.DirectorySeparatorChar),
+            Path.GetFullPath(dir2).TrimEnd(Path.DirectorySeparatorChar),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    public DirectoryTextCriterionHistory(int maxItems, string? fileName) : base(maxItems, fileName, CompareDirectoryPaths)
     {
     }
 

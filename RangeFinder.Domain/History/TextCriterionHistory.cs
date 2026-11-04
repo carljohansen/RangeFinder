@@ -12,13 +12,16 @@ public class TextCriterionHistory
 
     private readonly List<string> _items = [];
 
+    private readonly Func<string, string, bool> _customEqualityCheck;
+
     public int MaxItems { get; init; }
 
-    public TextCriterionHistory(int maxItems, string? fileName)
+    public TextCriterionHistory(int maxItems, string? fileName, Func<string, string, bool>? customEqualityCheck = null)
     {
         MaxItems = maxItems;
         _fileName = fileName;
-    }
+        _customEqualityCheck = customEqualityCheck ?? ((a, b) => a == b);
+    }    
 
     public void Initialize()
     {
@@ -63,7 +66,11 @@ public class TextCriterionHistory
             EnsureRefreshed();
         }
 
-        _items.Remove(text);
+        var existingIndex = _items.FindIndex(item => _customEqualityCheck(item, text));
+        if (existingIndex != -1)
+        {
+            _items.RemoveAt(existingIndex);
+        }
         _items.Insert(0, text);
         if (_items.Count > MaxItems)
         {
