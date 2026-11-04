@@ -156,6 +156,7 @@ public class UserSearchDto : IEquatable<UserSearchDto>
         }
         else
         {
+            currentExclusions = currentExclusions.TrimEnd().TrimEnd(';');
             return $"{currentExclusions};{folderRelativePath}";
         }
     }

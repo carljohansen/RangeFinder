@@ -1065,73 +1065,154 @@ public partial class SearchTab : UserControl
 
     private void mnuUseAsBaseDir_Click(object sender, EventArgs e)
     {
-        mnuFileItemContext.Hide();
+        mnuFileItemContext.Hide();  // Do I need this everywhere?
 
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
-
-        var selectedFilePath = selectedFileDisplay.FullPath;
-        if (selectedFilePath == null
-            || !selectedFileDisplay.Exists())
-        {
-            return;
-        }
-
-        var containingFolder = selectedFileDisplay.GetDirectoryName();
-        if (containingFolder != null)
-        {
-            cmbRootDir.Text = containingFolder;
-            cmbRootDir.FocusWithEndCursor();
-        }
+        var handler = new UseAsBaseDirHandler(this);
+        handler.ApplyToCurrentTab();
     }
 
     private void mnuUseAsBaseDirNewTab_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
-
-        var selectedFilePath = selectedFileDisplay.FullPath;
-        if (selectedFilePath == null
-            || !selectedFileDisplay.Exists())
-        {
-            return;
-        }
-
-        var containingFolder = selectedFileDisplay.GetDirectoryName();
-        if (containingFolder != null)
-        {
-            var currentState = GetCurrentTabState();
-            currentState.SearchDto.BaseDirectoriesPattern = containingFolder;
-            _parent.AddNewTab(currentState);
-        }
+        var handler = new UseAsBaseDirHandler(this);
+        handler.ApplyToNewTab();
     }
 
     private void mnuUseAsExcept_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
+        var handler = new UseAsExclusionHandler(this);
+        handler.ApplyToCurrentTab();
+    }
 
-        var folderToExclude = selectedFileDisplay.Attributes.HasFlag(FileAttributes.Directory)
-                                ? selectedFileDisplay.FullPath
-                                : selectedFileDisplay.Location.Location;
-        var exclusionsPlusNew = _currentSearch.SearchCriteria?.AddFolderExclusion(folderToExclude, cmbExceptFilePattern.Text);
-        if (exclusionsPlusNew != null)
-        {
-            cmbExceptFilePattern.Text = exclusionsPlusNew;
-            chkEnableExclusions.Checked = true;
-        }
+    private void mnuUseAsExceptNewTab_Click(object sender, EventArgs e)
+    {
+        var handler = new UseAsExclusionHandler(this);
+        handler.ApplyToNewTab();
     }
 
     private void mnuUseAsFileName_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-        if (selectedFileDisplay == null)
-            return;
+        var handler = new UseAsFileNameHandler(this);
+        handler.ApplyToCurrentTab();
+    }
 
-        var fileName = Path.GetFileName(selectedFileDisplay.FullPath);
-        cmbFilePattern.Text = fileName;
+    private void mnuUseAsFileNameNewTb_Click(object sender, EventArgs e)
+    {
+        var handler = new UseAsFileNameHandler(this);
+        handler.ApplyToNewTab();
+    }
+
+    private abstract class UseAsCriterionHandlerBase
+    {
+        protected SearchTab SearchTab;
+
+        protected UseAsCriterionHandlerBase(SearchTab searchTab)
+        {
+            SearchTab = searchTab;
+        }
+
+        public FileDisplay? GetFileDisplay(int rowIndex)
+        {
+            return SearchTab.GetRowFileDisplay(rowIndex);
+        }
+
+        public void ApplyToNewTab()
+        {
+            var value = PropertyRetriever();
+            if (value != null)
+            {
+                var copyOfCurrentState = SearchTab.GetCurrentTabState();
+                NewTabApplier(value, copyOfCurrentState);
+                SearchTab._parent.AddNewTab(copyOfCurrentState);
+            }
+        }
+
+        public void ApplyToCurrentTab()
+        {
+            var value = PropertyRetriever();
+            if (value != null)
+            {
+                CurrentTabApplier(value);
+            }
+        }
+
+        protected abstract string? PropertyRetriever();
+        protected abstract void NewTabApplier(string value, UserTabState newTabState);
+        protected abstract void CurrentTabApplier(string value);
+    }
+
+    private class UseAsFileNameHandler(SearchTab searchTab) : UseAsCriterionHandlerBase(searchTab)
+    {
+        protected override string? PropertyRetriever()
+        {
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            return fileDisplay == null ? null : Path.GetFileName(fileDisplay.FullPath);
+        }
+        protected override void NewTabApplier(string value, UserTabState newTabState)
+        {
+            newTabState.SearchDto.RawIncludeFilesPattern = value;
+        }
+        protected override void CurrentTabApplier(string value)
+        {
+            SearchTab.cmbFilePattern.Text = value;
+        }
+    }
+
+    private class UseAsExclusionHandler(SearchTab searchTab) : UseAsCriterionHandlerBase(searchTab)
+    {
+        protected override string? PropertyRetriever()
+        {
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            if (fileDisplay == null)
+                return null;
+
+            var folderToExclude = fileDisplay.Attributes.HasFlag(FileAttributes.Directory)
+                              ? fileDisplay.FullPath
+                              : fileDisplay.Location.Location;
+            var exclusionsPlusNew = SearchTab._currentSearch.SearchCriteria?.AddFolderExclusion(folderToExclude, SearchTab.cmbExceptFilePattern.Text);
+            return exclusionsPlusNew;
+        }
+
+        protected override void NewTabApplier(string value, UserTabState newTabState)
+        {
+            newTabState.SearchDto.RawExcludeFilesPattern = value;
+            newTabState.SearchDto.EnableFileExclusion = true;
+        }
+
+        protected override void CurrentTabApplier(string value)
+        {
+            SearchTab.cmbExceptFilePattern.Text = value;
+            SearchTab.chkEnableExclusions.Checked = true;
+        }
+    }
+
+    private class UseAsBaseDirHandler(SearchTab searchTab) : UseAsCriterionHandlerBase(searchTab)
+    {
+        protected override string? PropertyRetriever()
+        {
+            var selectedFileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            if (selectedFileDisplay == null)
+                return null;
+
+            var selectedFilePath = selectedFileDisplay.FullPath;
+            if (selectedFilePath == null
+                || !selectedFileDisplay.Exists())
+            {
+                return null;
+            }
+
+            var containingFolder = selectedFileDisplay.GetDirectoryName();
+            return containingFolder;
+        }
+
+        protected override void NewTabApplier(string value, UserTabState newTabState)
+        {
+            newTabState.SearchDto.BaseDirectoriesPattern = value;
+        }
+
+        protected override void CurrentTabApplier(string value)
+        {
+            SearchTab.cmbRootDir.Text = value;
+            SearchTab.cmbRootDir.FocusWithEndCursor();
+        }
     }
 }
