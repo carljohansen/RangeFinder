@@ -4,6 +4,18 @@ public class TabSearchHistory
 {
     public Stack<UserSearchDto> History { get; } = new();
 
+    public static TabSearchHistory Create(UserSearchDto initialSearch)
+    {
+        var history = new TabSearchHistory();
+        history.History.Push(initialSearch);
+        return history;
+    }
+
+    public UserSearchDto? Peek()
+    {
+        return History.Count > 0 ? History.Peek() : null;
+    }
+
     public bool Push(UserSearchDto searchDto)
     {
         if (History.Count > 0 && History.Peek().Equals(searchDto))
