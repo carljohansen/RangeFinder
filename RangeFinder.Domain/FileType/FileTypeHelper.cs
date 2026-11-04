@@ -8,7 +8,7 @@ public static class FileTypeHelper
     [
         ".txt", ".md", ".csv", ".json", ".xml", ".html", ".htm", ".css", ".js", ".ts", ".tsx",
         ".py", ".java", ".c", ".cpp", ".h", ".hpp", ".cs", ".vb", ".php", ".rb", ".yml",".yaml",
-        ".ini", ".log", ".bat", ".sh", ".ps1", ".r", ".pl", ".swift", ".go",
+        ".ini", ".log", ".bat", ".sh", ".ps1", ".r", ".pl", ".swift", ".go", ".config"
         // Add more known text file extensions as needed
     ];
 
