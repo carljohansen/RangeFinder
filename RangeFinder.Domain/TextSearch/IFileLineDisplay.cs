@@ -4,6 +4,8 @@ public interface IFileLineDisplay
 {
     public int LineNumber { get; }
 
+    public string Line { get; }
+
     public int SecondarySortKey { get; }
 
     public bool HasMatches { get; }

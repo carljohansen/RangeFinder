@@ -809,17 +809,34 @@ public partial class SearchTab : UserControl
             txtDateFilterAmount.Focus();
             return true;
         }
-        else if (keyData == (Keys.Alt | Keys.X))
+
+        if (keyData == (Keys.Alt | Keys.X))
         {
             cmbExceptFilePattern.Enabled = true;
             chkEnableExclusions.Checked = true;
             cmbExceptFilePattern.Focus();
             return true;
         }
-        else
+
+        if (keyData == (Keys.Control | Keys.D1))
         {
-            return base.ProcessCmdKey(ref msg, keyData);
+            btnShowMatchPreview_Click(this, EventArgs.Empty);
+            return true;
         }
+
+        if (keyData == (Keys.Control | Keys.D2))
+        {
+            btnShowFullPreview_Click(this, EventArgs.Empty);
+            return true;
+        }
+
+        if (keyData == (Keys.Control | Keys.D3))
+        {
+            btnHidePreview_Click(this, EventArgs.Empty);
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 
     public void CancelSearch()
@@ -940,7 +957,7 @@ public partial class SearchTab : UserControl
             return;
         }
 
-        if (selectedTextMatchItem.Tag is FileLineTextMatch match)
+        if (selectedTextMatchItem.Tag is IFileLineDisplay match)
         {
             Clipboard.SetText(match.Line);
         }
