@@ -3,19 +3,18 @@
 public enum DetectionResult
 {
     Indeterminate = 0,
-    KnownTextFileName,
-    KnownTextFileExtension,
-    KnownNonTextFile,
-    DetectedTextFile,
-    DetectedNonTextFile
+    DeclaredTextFile,
+    DeclaredNonTextFile,
+    InferredTextFile,
+    InferredNonTextFile,
+    AlwaysEvaluate
 }
 
 public static class DetectionResultExtensions
 {
     extension(DetectionResult detectionResult)
     {
-        public bool IsConfirmedTextFile() => detectionResult is DetectionResult.KnownTextFileExtension
-                                                    or DetectionResult.KnownTextFileName
-                                                    or DetectionResult.DetectedTextFile;
+        public bool IsConfirmedTextFile() => detectionResult is DetectionResult.DeclaredTextFile
+                                                    or DetectionResult.InferredTextFile;
     }
 }

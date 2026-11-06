@@ -36,17 +36,17 @@ public class TextFileDetector
         var extension = Path.GetExtension(filePath).ToLowerInvariant();
         if (FileTypeHelper.IsKnownTextFile(extension))
         {
-            return DetectionResult.KnownTextFileExtension;
+            return DetectionResult.DeclaredTextFile;
         }
-        else if (FileTypeHelper.IsKnownTextFile(extension))
+        else if (FileTypeHelper.IsKnownBinaryFile(extension))
         {
-            return DetectionResult.KnownNonTextFile;
+            return DetectionResult.DeclaredNonTextFile;
         }
 
         var fileName = Path.GetFileName(filePath).ToLowerInvariant();
         if (fileName == ".gitignore" || fileName == ".gitattributes")
         {
-            return DetectionResult.KnownTextFileName;
+            return DetectionResult.DeclaredTextFile;
         }
 
         try
@@ -54,8 +54,8 @@ public class TextFileDetector
             var heavyDetectionResult = UtfUnknown.CharsetDetector.DetectFromFile(filePath);
 
             return heavyDetectionResult.Detected == null
-                                ? DetectionResult.DetectedNonTextFile
-                                : DetectionResult.DetectedTextFile;
+                                ? DetectionResult.InferredNonTextFile
+                                : DetectionResult.InferredTextFile;
         }
         catch (IOException)
         {

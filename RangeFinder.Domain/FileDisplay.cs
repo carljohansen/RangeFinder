@@ -60,7 +60,7 @@ public class FileDisplay
 
         var folderMetadata = ExtensionMetadataRepository.Instance.GetFolderMetadata();
 
-        var result = new FileDisplay(Path.GetFileName(directoryPath), DetectionResult.KnownNonTextFile, locationRepo)
+        var result = new FileDisplay(Path.GetFileName(directoryPath), DetectionResult.DeclaredNonTextFile, locationRepo)
         {
             FullPath = matchingDirFullPath,
             Attributes = FileAttributes.Directory,
