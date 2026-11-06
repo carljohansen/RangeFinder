@@ -22,16 +22,11 @@ public static class FileTypeHelper
 
     public static bool IsKnownTextFile(string? fileExtension)
     {
-        return fileExtension == null ? false : KnownTextFileExtensions.Contains(fileExtension.ToLower());
+        return fileExtension != null && KnownTextFileExtensions.Contains(fileExtension.ToLower());
     }
 
     public static bool IsKnownBinaryFile(string fileExtension)
     {
         return KnownBinaryFileExtensions.Contains(fileExtension.ToLower());
-    }
-
-    extension(FileDisplay fileDisplay)
-    {
-        public bool IsKnownTextFile() => IsKnownTextFile(fileDisplay.GetFileExtension());
     }
 }

@@ -18,6 +18,17 @@ public partial class SearchTab : UserControl
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int Index { get; init; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public byte ContextWindowSize
+    {
+        get;
+        set
+        {
+            field = value;
+            HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
+        }
+    } = 1;
+
     public event EventHandler<FilesFoundUpdateEventArgs>? FilesFoundUpdate;
 
     private readonly FileSearch _currentSearch;
@@ -243,6 +254,7 @@ public partial class SearchTab : UserControl
         SetProgress(0);
         RaiseFilesFoundUpdate(-1, searchStatus: FileSearchStatus.Running, searchIncludesFolders: searchDto.IncludeFolders);
         lstTextMatches.Items.Clear();
+        lstTextMatches.Refresh();
         contextMenuRowIndex = -1;
         _searchCancellationTokenSource = new CancellationTokenSource();
 
@@ -487,7 +499,7 @@ public partial class SearchTab : UserControl
         if (selectedFileDisplay == null)
             return;
 
-        var isDefinitelyTextFile = FileTypeHelper.IsKnownTextFile(selectedFileDisplay.GetFileExtension());
+        var isDefinitelyTextFile = selectedFileDisplay.IsConfirmedTextFile();
         if (!isDefinitelyTextFile)
         {
             return;
@@ -555,8 +567,6 @@ public partial class SearchTab : UserControl
         MatchListRenderer.Instance.DrawMatchListViewSubItem(itemUnderlyingMatches, lstTextMatches, e);
     }
 
-    private SlidingWindow<IFileLineDisplay> _priorContextWindow = new(2);
-
     private void grdResult_RowEnter(object sender, DataGridViewCellEventArgs e)
     {
         HandleGridRowEnter(e.RowIndex);
@@ -564,6 +574,9 @@ public partial class SearchTab : UserControl
 
     private void HandleGridRowEnter(int rowIndex)
     {
+        SlidingWindow<IFileLineDisplay> priorContextWindow = new(ContextWindowSize);
+        var postContextLinesAdded = 0;
+
         if (rowIndex < 0)
         {
             return;
@@ -586,19 +599,20 @@ public partial class SearchTab : UserControl
         }
 
         lstTextMatches.Items.Clear();
-        _priorContextWindow.Clear();
 
-        if (!fileDisplay.IsKnownTextFile())
+        if (!fileDisplay.IsConfirmedTextFile())
         {
             return;
         }
 
         var lineCount = 0;
+        var currentlyFillingPostContextWindow = false;
         _currentSearch.GetMatches(fileDisplay.FullPath, _currentTextFilePreviewMode, e =>
         {
             if (!e.FileLineDisplay.HasMatches)
             {
-                if (_currentTextFilePreviewMode == TextFilePreviewMode.FullPreview)
+                if (_currentTextFilePreviewMode == TextFilePreviewMode.FullPreview
+                    || currentlyFillingPostContextWindow)
                 {
                     var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
                     nonMatchItem.Tag = e.FileLineDisplay;
@@ -607,19 +621,27 @@ public partial class SearchTab : UserControl
                     {
                         e.Cancel = true;
                     }
+                    if (currentlyFillingPostContextWindow
+                        && ++postContextLinesAdded == ContextWindowSize)
+                    {
+                        currentlyFillingPostContextWindow = false;
+                    }
                     return;
                 }
 
-                _priorContextWindow.Add(e.FileLineDisplay);
+                priorContextWindow.Add(e.FileLineDisplay);
                 return;
             }
 
-            var priorItems = _priorContextWindow.GetWindowAndClear();
+            var priorItems = priorContextWindow.GetWindowAndClear();
             foreach (var priorItem in priorItems)
             {
                 var priorListItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
                 priorListItem.Tag = priorItem;
             }
+
+            currentlyFillingPostContextWindow = ContextWindowSize > 0;
+            postContextLinesAdded = 0;
             var newItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
             newItem.Tag = e.FileLineDisplay;
         });
@@ -716,7 +738,7 @@ public partial class SearchTab : UserControl
         else
         {
             var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-            if (FileTypeHelper.IsKnownTextFile(selectedFileDisplay?.GetFileExtension()))
+            if (selectedFileDisplay?.IsConfirmedTextFile() ?? false)
             {
                 // They didn't do a text search,  but the file extension is known to be a text file.
                 enableOpenWithTextEditor = true;
@@ -1122,6 +1144,12 @@ public partial class SearchTab : UserControl
     {
         var handler = new FilterByExtensionHandler(this);
         handler.ApplyToCurrentTab();
+    }
+
+    private void mnuFilterByExtensionNewTab_Click(object sender, EventArgs e)
+    {
+        var handler = new FilterByExtensionHandler(this);
+        handler.ApplyToNewTab();
     }
 
     private abstract class UseAsCriterionHandlerBase

@@ -436,4 +436,24 @@ public partial class SearchForm : Form
         _currentUnverifiedDropFileName = null;
         _verifiedDropFileName = null;
     }
+
+    private void mnuMoreContextLines_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.AdjustContextWindow(1);
+    }
+
+    private void mnuFewerContextLines_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.AdjustContextWindow(-1);
+    }
 }

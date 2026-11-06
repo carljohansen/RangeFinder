@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing;
 using RangeFinder.Domain.History;
+using RangeFinder.Domain.TextFileDetection;
 using RangeFinder.Domain.TextSearch;
 using System.Data;
 using System.Diagnostics;
@@ -253,7 +254,7 @@ public class FileSearch
             yield break;
         }
 
-        await foreach (var match in ProcessFiles(baseDirectory, rawFiles.Files, textChecks, cancellationToken))
+        await foreach (var match in ProcessFiles(baseDirectory, rawFiles.Files, textChecks, includePatterns.Paths.Count > 0, cancellationToken))
         {
             yield return match;
         }
@@ -262,6 +263,7 @@ public class FileSearch
     private async IAsyncEnumerable<FileDisplay> ProcessFiles(string baseDirectory,
                                                             IEnumerable<FilePatternMatch> files,
                                                             FileMatcher textChecks,
+                                                            bool hasSpecifiedFileNamePattern,
                                                             [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var hasTextChecks = textChecks.HasTextChecks;
@@ -273,6 +275,9 @@ public class FileSearch
         }
 
         var eventStreamTimer = Stopwatch.StartNew();
+
+        // Force text searching when they have specified a file name pattern.
+        var defaultTextFileInference = hasSpecifiedFileNamePattern ? DetectionResult.DetectedTextFile : DetectionResult.Indeterminate;
 
         FileDisplay? matchedItem = null;
         var numFilesProcessed = 0;
@@ -288,64 +293,75 @@ public class FileSearch
             }
 
             var passesMetadataChecks = true;
+            var textFileStatus = defaultTextFileInference;
             if (SearchCriteria.HasMetadataCriteria)
             {
-                matchedItem = new FileDisplay(match.Path, _fileLocationRepository);
+                matchedItem = new FileDisplay(match.Path, TextFileDetection.DetectionResult.Indeterminate, _fileLocationRepository);
                 matchedItem.InitializeMetadata();
                 passesMetadataChecks = MeetsMetadataCriteria(matchedItem);
+                textFileStatus = matchedItem.TextFileStatus;
             }
 
             var passesTextCheck = true;
             var canShortCircuit = false;
             if (hasTextChecks)
             {
-                var checkerState = new bool[textChecks.NumTextChecks]; // false = still evaluating; true already found a match
-                var numInclusiveChecksSatisfied = 0;
-                try
+                string filePath = Path.Combine(_fileLocationRepository.BaseDirectory, match.Path);
+                if (textFileStatus == DetectionResult.Indeterminate)
                 {
-                    foreach (var line in File.ReadLines(Path.Combine(_fileLocationRepository.BaseDirectory, match.Path)))
+                    textFileStatus = TextFileDetector.DetectTextFileStatus(filePath);
+                }
+
+                var checkerState = new bool[textChecks.NumTextChecks]; // false = still evaluating; true already found a match
+                if (textFileStatus.IsConfirmedTextFile())
+                {
+                    var numInclusiveChecksSatisfied = 0;
+                    try
                     {
-                        for (var i = 0; i < textChecks.NumTextChecks; i++)
+                        foreach (var line in File.ReadLines(filePath))
                         {
-                            if (checkerState[i] == false)
+                            for (var i = 0; i < textChecks.NumTextChecks; i++)
                             {
-                                if (textChecks.Matchers[i].HasMatchOnLine(line))
+                                if (checkerState[i] == false)
                                 {
-                                    if (textChecks.Matchers[i].IsExclusion)
+                                    if (textChecks.Matchers[i].HasMatchOnLine(line))
                                     {
-                                        passesTextCheck = false;
-                                        canShortCircuit = true;
-                                        break;
-                                    }
-                                    checkerState[i] = true;
-                                    numInclusiveChecksSatisfied++;
-                                    if (numInclusiveChecksSatisfied == numInclusiveChecks
-                                        && !hasExclusiveChecks)
-                                    {
-                                        canShortCircuit = true;
-                                        break;
+                                        if (textChecks.Matchers[i].IsExclusion)
+                                        {
+                                            passesTextCheck = false;
+                                            canShortCircuit = true;
+                                            break;
+                                        }
+                                        checkerState[i] = true;
+                                        numInclusiveChecksSatisfied++;
+                                        if (numInclusiveChecksSatisfied == numInclusiveChecks
+                                            && !hasExclusiveChecks)
+                                        {
+                                            canShortCircuit = true;
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        if (canShortCircuit)
-                        {
-                            break;
+                            if (canShortCircuit)
+                            {
+                                break;
+                            }
                         }
                     }
-                }
-                catch (IOException)
-                {
-                    // If we can't read the file, we just skip it.
-                    passesTextCheck = false;
-                }
-
-                for (var i = 0; i < textChecks.NumTextChecks; i++)
-                {
-                    if (textChecks.Matchers[i].IsExclusion)
+                    catch (IOException)
                     {
-                        checkerState[i] = true;
+                        // If we can't read the file, we just skip it.
+                        passesTextCheck = false;
+                    }
+
+                    for (var i = 0; i < textChecks.NumTextChecks; i++)
+                    {
+                        if (textChecks.Matchers[i].IsExclusion)
+                        {
+                            checkerState[i] = true;
+                        }
                     }
                 }
 
@@ -355,7 +371,7 @@ public class FileSearch
             if (passesTextCheck
               && passesMetadataChecks)
             {
-                yield return matchedItem ?? new FileDisplay(match.Path, _fileLocationRepository);
+                yield return matchedItem ?? new FileDisplay(match.Path, TextFileDetection.DetectionResult.DetectedTextFile, _fileLocationRepository);
             }
 
             numFilesProcessed++;
@@ -413,8 +429,12 @@ public class FileSearch
             return;
         }
 
-        var matcher = new FileMatcher(null, TextSearches);
-        matcher.GetMatches(filePath, matchAction);
+        try
+        {
+            var matcher = new FileMatcher(null, TextSearches);
+            matcher.GetMatches(filePath, matchAction);
+        }
+        catch { }
     }
 
     private int FileLineTextMatchSorter(IFileLineDisplay x, IFileLineDisplay y)

@@ -46,12 +46,15 @@
             mnuNewSearchTab = new ToolStripMenuItem();
             closeTabToolStripMenuItem = new ToolStripMenuItem();
             duplicateTabToolStripMenuItem = new ToolStripMenuItem();
+            tabToolStripMenuItem = new ToolStripMenuItem();
+            mnuMoreContextLines = new ToolStripMenuItem();
+            mnuFewerContextLines = new ToolStripMenuItem();
             mnuTabContext.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
-            // 
+            //
             // tabsMain
-            // 
+            //
             tabsMain.AllowDrop = true;
             tabsMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabsMain.ContextMenuStrip = mnuTabContext;
@@ -64,118 +67,141 @@
             tabsMain.DragDrop += tabsMain_DragDrop;
             tabsMain.DragEnter += tabsMain_DragEnter;
             tabsMain.DragLeave += tabsMain_DragLeave;
-            // 
+            //
             // mnuTabContext
-            // 
+            //
             mnuTabContext.Items.AddRange(new ToolStripItem[] { mnuCloseTab, mnuCloseOtherTabs, mnuDuplicateTab });
             mnuTabContext.Name = "mnuTabContext";
             mnuTabContext.Size = new Size(164, 70);
             mnuTabContext.Opening += mnuTabContext_Opening;
-            // 
+            //
             // mnuCloseTab
-            // 
+            //
             mnuCloseTab.Name = "mnuCloseTab";
             mnuCloseTab.Size = new Size(163, 22);
             mnuCloseTab.Text = "Close Tab";
             mnuCloseTab.Click += mnuCloseTab_Click;
-            // 
+            //
             // mnuCloseOtherTabs
-            // 
+            //
             mnuCloseOtherTabs.Name = "mnuCloseOtherTabs";
             mnuCloseOtherTabs.Size = new Size(163, 22);
             mnuCloseOtherTabs.Text = "Close Other Tabs";
             mnuCloseOtherTabs.Click += mnuCloseOtherTabs_Click;
-            // 
+            //
             // mnuDuplicateTab
-            // 
+            //
             mnuDuplicateTab.Name = "mnuDuplicateTab";
             mnuDuplicateTab.Size = new Size(163, 22);
             mnuDuplicateTab.Text = "Duplicate Tab";
             mnuDuplicateTab.Click += mnuDuplicateTab_Click;
-            // 
+            //
             // menuStrip1
-            // 
+            //
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, searchToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, searchToolStripMenuItem, tabToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(5, 2, 0, 2);
             menuStrip1.Size = new Size(1159, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
-            // 
+            //
             // fileToolStripMenuItem
-            // 
+            //
             fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuExploreZip, toolStripSeparator2, mnuClearSearchHistory, toolStripSeparator1, mnuQuit });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
-            // 
+            //
             // mnuExploreZip
-            // 
+            //
             mnuExploreZip.Name = "mnuExploreZip";
             mnuExploreZip.ShortcutKeys = Keys.Control | Keys.O;
             mnuExploreZip.Size = new Size(227, 22);
             mnuExploreZip.Text = "Explore Zip Archive...";
             mnuExploreZip.Click += mnuExploreZip_Click;
-            // 
+            //
             // toolStripSeparator2
-            // 
+            //
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(224, 6);
-            // 
+            //
             // mnuClearSearchHistory
-            // 
+            //
             mnuClearSearchHistory.Name = "mnuClearSearchHistory";
             mnuClearSearchHistory.Size = new Size(227, 22);
             mnuClearSearchHistory.Text = "Clear Search &History";
             mnuClearSearchHistory.Click += mnuClearSearchHistory_Click;
-            // 
+            //
             // toolStripSeparator1
-            // 
+            //
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(224, 6);
-            // 
+            //
             // mnuQuit
-            // 
+            //
             mnuQuit.Name = "mnuQuit";
             mnuQuit.Size = new Size(227, 22);
             mnuQuit.Text = "E&xit";
             mnuQuit.Click += mnuQuit_Click;
-            // 
+            //
             // searchToolStripMenuItem
-            // 
+            //
             searchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuNewSearchTab, closeTabToolStripMenuItem, duplicateTabToolStripMenuItem });
             searchToolStripMenuItem.Name = "searchToolStripMenuItem";
             searchToolStripMenuItem.Size = new Size(54, 20);
             searchToolStripMenuItem.Text = "Search";
-            // 
+            //
             // mnuNewSearchTab
-            // 
+            //
             mnuNewSearchTab.Name = "mnuNewSearchTab";
             mnuNewSearchTab.ShortcutKeys = Keys.Control | Keys.T;
             mnuNewSearchTab.Size = new Size(219, 22);
             mnuNewSearchTab.Text = "New Tab";
             mnuNewSearchTab.Click += mnuNewSearchTab_Click;
-            // 
+            //
             // closeTabToolStripMenuItem
-            // 
+            //
             closeTabToolStripMenuItem.Name = "closeTabToolStripMenuItem";
             closeTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.W;
             closeTabToolStripMenuItem.Size = new Size(219, 22);
             closeTabToolStripMenuItem.Text = "Close Tab";
             closeTabToolStripMenuItem.Click += closeTabToolStripMenuItem_Click;
-            // 
+            //
             // duplicateTabToolStripMenuItem
-            // 
+            //
             duplicateTabToolStripMenuItem.Name = "duplicateTabToolStripMenuItem";
             duplicateTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.K;
             duplicateTabToolStripMenuItem.Size = new Size(219, 22);
             duplicateTabToolStripMenuItem.Text = "Duplicate Tab";
             duplicateTabToolStripMenuItem.Click += duplicateTabToolStripMenuItem_Click;
-            // 
+            //
+            // tabToolStripMenuItem
+            //
+            tabToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuMoreContextLines, mnuFewerContextLines });
+            tabToolStripMenuItem.Name = "tabToolStripMenuItem";
+            tabToolStripMenuItem.Size = new Size(38, 20);
+            tabToolStripMenuItem.Text = "Tab";
+            //
+            // mnuMoreContextLines
+            //
+            mnuMoreContextLines.Name = "mnuMoreContextLines";
+            mnuMoreContextLines.ShortcutKeys = Keys.Control | Keys.Oemplus;
+            mnuMoreContextLines.Size = new Size(272, 22);
+            mnuMoreContextLines.Text = "More Context Lines";
+            mnuMoreContextLines.Click += mnuMoreContextLines_Click;
+            //
+            // mnuFewerContextLines
+            //
+            mnuFewerContextLines.Name = "mnuFewerContextLines";
+            mnuFewerContextLines.ShortcutKeys = Keys.Control | Keys.OemMinus;
+            mnuFewerContextLines.Size = new Size(272, 22);
+            mnuFewerContextLines.Text = "Fewer Context Lines";
+            mnuFewerContextLines.Click += mnuFewerContextLines_Click;
+            //
             // SearchForm
-            // 
+            //
             AllowDrop = true;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -217,5 +243,8 @@
         private ToolStripMenuItem mnuExploreZip;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem tabToolStripMenuItem;
+        private ToolStripMenuItem mnuMoreContextLines;
+        private ToolStripMenuItem mnuFewerContextLines;
     }
 }

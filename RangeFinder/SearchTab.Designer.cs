@@ -91,6 +91,7 @@ namespace RangeFinder
             btnShowFullPreview = new Button();
             btnHidePreview = new Button();
             mainToolTip = new ToolTip(components);
+            mnuFilterByExtensionNewTab = new ToolStripMenuItem();
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -107,7 +108,7 @@ namespace RangeFinder
             btnSearch.Margin = new Padding(3, 2, 3, 2);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(82, 24);
-            btnSearch.TabIndex = 14;
+            btnSearch.TabIndex = 15;
             btnSearch.Text = "&Search";
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
@@ -136,7 +137,7 @@ namespace RangeFinder
             mnuFileItemContext.ImageScalingSize = new Size(20, 20);
             mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuUseAsCriterion });
             mnuFileItemContext.Name = "mnuFileItemContext";
-            mnuFileItemContext.Size = new Size(194, 192);
+            mnuFileItemContext.Size = new Size(194, 214);
             //
             // mnuOpenFile
             //
@@ -201,7 +202,7 @@ namespace RangeFinder
             //
             // mnuUseAsCriterion
             //
-            mnuUseAsCriterion.DropDownItems.AddRange(new ToolStripItem[] { mnuUseAsFileName, mnuFilterByExtension, mnuUseAsExcept, mnuUseAsBaseDir, toolStripSeparator3, mnuUseAsFileNameNewTb, mnuUseAsExceptNewTab, mnuUseAsBaseDirNewTab });
+            mnuUseAsCriterion.DropDownItems.AddRange(new ToolStripItem[] { mnuUseAsFileName, mnuFilterByExtension, mnuUseAsExcept, mnuUseAsBaseDir, toolStripSeparator3, mnuUseAsFileNameNewTb, mnuFilterByExtensionNewTab, mnuUseAsExceptNewTab, mnuUseAsBaseDirNewTab });
             mnuUseAsCriterion.Name = "mnuUseAsCriterion";
             mnuUseAsCriterion.Size = new Size(193, 22);
             mnuUseAsCriterion.Text = "Use As Criterion";
@@ -268,7 +269,7 @@ namespace RangeFinder
             chkMatchCase.Margin = new Padding(3, 2, 3, 2);
             chkMatchCase.Name = "chkMatchCase";
             chkMatchCase.Size = new Size(88, 19);
-            chkMatchCase.TabIndex = 6;
+            chkMatchCase.TabIndex = 12;
             chkMatchCase.Text = "Match &Case";
             chkMatchCase.UseVisualStyleBackColor = true;
             //
@@ -280,7 +281,7 @@ namespace RangeFinder
             chkMatchWholeWord.Margin = new Padding(3, 2, 3, 2);
             chkMatchWholeWord.Name = "chkMatchWholeWord";
             chkMatchWholeWord.Size = new Size(92, 19);
-            chkMatchWholeWord.TabIndex = 7;
+            chkMatchWholeWord.TabIndex = 13;
             chkMatchWholeWord.Text = "Whole &Word";
             chkMatchWholeWord.UseVisualStyleBackColor = true;
             //
@@ -308,7 +309,7 @@ namespace RangeFinder
             label3.Location = new Point(5, 114);
             label3.Name = "label3";
             label3.Size = new Size(49, 15);
-            label3.TabIndex = 8;
+            label3.TabIndex = 6;
             label3.Text = "&Look in:";
             //
             // spltResultPanel
@@ -482,7 +483,7 @@ namespace RangeFinder
             chkEnableExclusions.Margin = new Padding(3, 2, 3, 2);
             chkEnableExclusions.Name = "chkEnableExclusions";
             chkEnableExclusions.Size = new Size(61, 19);
-            chkEnableExclusions.TabIndex = 16;
+            chkEnableExclusions.TabIndex = 14;
             chkEnableExclusions.Text = "E&nable";
             chkEnableExclusions.UseVisualStyleBackColor = true;
             chkEnableExclusions.CheckedChanged += chkEnableExclusions_CheckedChanged;
@@ -494,7 +495,7 @@ namespace RangeFinder
             btnCancelSearch.Margin = new Padding(3, 2, 3, 2);
             btnCancelSearch.Name = "btnCancelSearch";
             btnCancelSearch.Size = new Size(82, 24);
-            btnCancelSearch.TabIndex = 15;
+            btnCancelSearch.TabIndex = 16;
             btnCancelSearch.Text = "Sto&p";
             btnCancelSearch.UseVisualStyleBackColor = true;
             btnCancelSearch.Click += btnCancelSearch_Click;
@@ -506,7 +507,7 @@ namespace RangeFinder
             chkFilterByDate.Margin = new Padding(3, 2, 3, 2);
             chkFilterByDate.Name = "chkFilterByDate";
             chkFilterByDate.Size = new Size(128, 19);
-            chkFilterByDate.TabIndex = 10;
+            chkFilterByDate.TabIndex = 8;
             chkFilterByDate.Text = "&Modified in the last";
             chkFilterByDate.UseVisualStyleBackColor = true;
             chkFilterByDate.CheckedChanged += chkFilterByDate_CheckedChanged;
@@ -517,7 +518,7 @@ namespace RangeFinder
             txtDateFilterAmount.Margin = new Padding(3, 2, 3, 2);
             txtDateFilterAmount.Name = "txtDateFilterAmount";
             txtDateFilterAmount.Size = new Size(38, 23);
-            txtDateFilterAmount.TabIndex = 11;
+            txtDateFilterAmount.TabIndex = 9;
             txtDateFilterAmount.TextAlign = HorizontalAlignment.Right;
             txtDateFilterAmount.Enter += txtDateFilterAmount_Enter;
             //
@@ -530,7 +531,7 @@ namespace RangeFinder
             cmbDateFilterAmountType.Margin = new Padding(3, 2, 3, 2);
             cmbDateFilterAmountType.Name = "cmbDateFilterAmountType";
             cmbDateFilterAmountType.Size = new Size(75, 23);
-            cmbDateFilterAmountType.TabIndex = 12;
+            cmbDateFilterAmountType.TabIndex = 10;
             //
             // cmbRootDir
             //
@@ -540,7 +541,7 @@ namespace RangeFinder
             cmbRootDir.Margin = new Padding(3, 2, 3, 2);
             cmbRootDir.Name = "cmbRootDir";
             cmbRootDir.Size = new Size(807, 23);
-            cmbRootDir.TabIndex = 9;
+            cmbRootDir.TabIndex = 7;
             cmbRootDir.SelectedIndexChanged += cmbRootDir_SelectedIndexChanged;
             cmbRootDir.TextUpdate += cmbRootDir_TextUpdate;
             cmbRootDir.SelectedValueChanged += cmbRootDir_SelectedValueChanged;
@@ -552,7 +553,7 @@ namespace RangeFinder
             chkShowHidden.Location = new Point(649, 143);
             chkShowHidden.Name = "chkShowHidden";
             chkShowHidden.Size = new Size(106, 19);
-            chkShowHidden.TabIndex = 13;
+            chkShowHidden.TabIndex = 11;
             chkShowHidden.Text = "Include Fol&ders";
             chkShowHidden.UseVisualStyleBackColor = true;
             //
@@ -631,7 +632,7 @@ namespace RangeFinder
             btnShowFullPreview.Name = "btnShowFullPreview";
             btnShowFullPreview.Size = new Size(25, 25);
             btnShowFullPreview.TabIndex = 18;
-            mainToolTip.SetToolTip(btnShowFullPreview, "Show Full Text Preview");
+            mainToolTip.SetToolTip(btnShowFullPreview, "Show Full Text Preview (Ctrl+2)");
             btnShowFullPreview.UseVisualStyleBackColor = true;
             btnShowFullPreview.Click += btnShowFullPreview_Click;
             //
@@ -645,9 +646,16 @@ namespace RangeFinder
             btnHidePreview.Name = "btnHidePreview";
             btnHidePreview.Size = new Size(25, 25);
             btnHidePreview.TabIndex = 19;
-            mainToolTip.SetToolTip(btnHidePreview, "Hide Preview Pane");
+            mainToolTip.SetToolTip(btnHidePreview, "Hide Preview Pane (Ctrl+3)");
             btnHidePreview.UseVisualStyleBackColor = true;
             btnHidePreview.Click += btnHidePreview_Click;
+            //
+            // mnuFilterByExtensionNewTab
+            //
+            mnuFilterByExtensionNewTab.Name = "mnuFilterByExtensionNewTab";
+            mnuFilterByExtensionNewTab.Size = new Size(187, 22);
+            mnuFilterByExtensionNewTab.Text = "Extension (New Tab)";
+            mnuFilterByExtensionNewTab.Click += mnuFilterByExtensionNewTab_Click;
             //
             // SearchTab
             //
@@ -754,5 +762,6 @@ namespace RangeFinder
         private ToolStripMenuItem mnuUseAsBaseDirNewTab;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem mnuFilterByExtension;
+        private ToolStripMenuItem mnuFilterByExtensionNewTab;
     }
 }

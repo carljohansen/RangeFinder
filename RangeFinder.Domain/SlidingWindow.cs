@@ -7,16 +7,19 @@ public class SlidingWindow<T>
 
     public SlidingWindow(int windowSize)
     {
-        if (windowSize <= 0)
-            throw new ArgumentException("Window size must be greater than zero.", nameof(windowSize));
+        if (windowSize < 0)
+            throw new ArgumentException("Window size must be greater than or equal to zero.", nameof(windowSize));
         _windowSize = windowSize;
-        _queue = new Queue<T>(windowSize);
+        _queue = windowSize > 0 ? new Queue<T>(windowSize) : null!;
     }
-
-    public void Clear() => _queue.Clear();
 
     public void Add(T item)
     {
+        if (_windowSize == 0)
+        {
+            return;
+        }
+
         if (_queue.Count == _windowSize)
         {
             _queue.Dequeue();
@@ -26,13 +29,13 @@ public class SlidingWindow<T>
 
     public IEnumerable<T> GetWindow()
     {
-        return [.. _queue];
+        return _windowSize == 0 ? [] : [.. _queue];
     }
 
     public IEnumerable<T> GetWindowAndClear()
     {
         var window = GetWindow();
-        _queue.Clear();
+        _queue?.Clear();
         return window;
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using RangeFinder.Domain.TextFileDetection;
+using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace RangeFinder.Domain;
@@ -23,6 +25,8 @@ public class FileDisplay
 
     public FileAttributes Attributes { get; private set; }
 
+    public DetectionResult TextFileStatus { get; private set; } = DetectionResult.Indeterminate;
+
     public string DisplayLocation => Location.LocationDisplay ?? Location.Location;
 
     public string? LocationTooltip => Location.LocationDisplay != null ? Location.Location : null;
@@ -41,12 +45,13 @@ public class FileDisplay
                 : Path.GetDirectoryName(FullPath) ?? string.Empty;
     }
 
-    public FileDisplay(string relativePath, FileLocationRepository locationRepo)
+    public FileDisplay(string relativePath, DetectionResult textFileStatus, FileLocationRepository locationRepo)
     {
         FullPath = Path.GetFullPath(Path.Combine(locationRepo.BaseDirectory, relativePath));
         Name = Path.GetFileName(FullPath);
         Location = locationRepo.Get(FullPath);
         SizeDisplay = "";
+        TextFileStatus = textFileStatus;
     }
 
     public static FileDisplay CreateFolder(string directoryPath, string baseDirectory, FileLocationRepository locationRepo)
@@ -55,7 +60,7 @@ public class FileDisplay
 
         var folderMetadata = ExtensionMetadataRepository.Instance.GetFolderMetadata();
 
-        var result = new FileDisplay(Path.GetFileName(directoryPath), locationRepo)
+        var result = new FileDisplay(Path.GetFileName(directoryPath), DetectionResult.KnownNonTextFile, locationRepo)
         {
             FullPath = matchingDirFullPath,
             Attributes = FileAttributes.Directory,
@@ -93,7 +98,21 @@ public class FileDisplay
         SizeDisplay = BytesToString(Size);
         LastModified = NormalizeModificationTime(fileInfo.LastWriteTime); // Last modified date/time
         //}
+
+        InitializeTextStatus();
     }
+
+    public void InitializeTextStatus()
+    {
+        if (TextFileStatus != DetectionResult.Indeterminate)
+        {
+            return;
+        }
+
+        TextFileStatus = TextFileDetector.Instance.Detect(FullPath);
+    }
+
+    public bool IsConfirmedTextFile() => TextFileStatus.IsConfirmedTextFile();
 
     private static String BytesToString(long byteCount)
     {

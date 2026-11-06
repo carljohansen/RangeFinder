@@ -106,6 +106,17 @@ public class SearchTabPage : TabPage
 
     public int Index => _searchTab.Index;
 
+    public byte ContextWindowSize => _searchTab.ContextWindowSize;
+
+    public void AdjustContextWindow(int changeBy)
+    {
+        var newSize = ContextWindowSize + changeBy;
+        if (0 <= newSize && newSize <= 20)
+        {
+            _searchTab.ContextWindowSize = (byte)newSize;
+        }
+    }
+
     public UserTabState GetCurrentSearchSettings() => _searchTab.GetCurrentTabState();
 
     public void ClearHistory() => _searchTab.ClearHistory();
