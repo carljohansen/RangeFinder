@@ -1,5 +1,6 @@
 ﻿using RangeFinder.Domain;
 using RangeFinder.Domain.History;
+using RangeFinder.Domain.TextFileDetection;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -127,6 +128,8 @@ public partial class SearchForm : Form
         }
 
         TextCriterionHistoryCollection.Instance.EnsureRefreshed();
+        TextFileDetectorRepository.Populate(TextFileDetector.Instance);
+
         var savedTabs = UserSearchRepository.LoadSavedSearches();
         var savedPrefs = TabSettingsRepository.LoadSavedTabSettings();
         if (savedTabs.Length > 0)

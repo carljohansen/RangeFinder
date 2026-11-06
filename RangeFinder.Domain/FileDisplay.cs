@@ -25,7 +25,7 @@ public class FileDisplay
 
     public FileAttributes Attributes { get; private set; }
 
-    public DetectionResult TextFileStatus { get; private set; } = DetectionResult.Indeterminate;
+    public FileTextTreatment TextFileStatus { get; private set; } = FileTextTreatment.Indeterminate;
 
     public string DisplayLocation => Location.LocationDisplay ?? Location.Location;
 
@@ -45,7 +45,7 @@ public class FileDisplay
                 : Path.GetDirectoryName(FullPath) ?? string.Empty;
     }
 
-    public FileDisplay(string relativePath, DetectionResult textFileStatus, FileLocationRepository locationRepo)
+    public FileDisplay(string relativePath, FileTextTreatment textFileStatus, FileLocationRepository locationRepo)
     {
         FullPath = Path.GetFullPath(Path.Combine(locationRepo.BaseDirectory, relativePath));
         Name = Path.GetFileName(FullPath);
@@ -60,7 +60,7 @@ public class FileDisplay
 
         var folderMetadata = ExtensionMetadataRepository.Instance.GetFolderMetadata();
 
-        var result = new FileDisplay(Path.GetFileName(directoryPath), DetectionResult.DeclaredNonTextFile, locationRepo)
+        var result = new FileDisplay(Path.GetFileName(directoryPath), FileTextTreatment.DeclaredNonTextFile, locationRepo)
         {
             FullPath = matchingDirFullPath,
             Attributes = FileAttributes.Directory,
@@ -104,7 +104,7 @@ public class FileDisplay
 
     public void InitializeTextStatus()
     {
-        if (TextFileStatus != DetectionResult.Indeterminate)
+        if (TextFileStatus != FileTextTreatment.Indeterminate)
         {
             return;
         }

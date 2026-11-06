@@ -88,6 +88,8 @@ public class FileSearch
         var finalState = wasCancelled ? FileSearchStatus.Cancelled : FileSearchStatus.Completed;
         var numMatches = DataTable.Rows.Count;
 
+        TextFileDetectorRepository.Save();
+
         string finalMessage = wasCancelled ? "Cancelled" : "Done";
 
         return new SearchOutcome(finalMessage, numMatches, searchDto.IncludeFolders, timer.Elapsed, finalState);
@@ -277,7 +279,7 @@ public class FileSearch
         var eventStreamTimer = Stopwatch.StartNew();
 
         // Force text searching when they have specified a file name pattern.
-        var defaultTextFileInference = hasSpecifiedFileNamePattern ? DetectionResult.InferredTextFile : DetectionResult.Indeterminate;
+        var defaultTextFileInference = hasSpecifiedFileNamePattern ? FileTextTreatment.InferredTextFile : FileTextTreatment.Indeterminate;
 
         FileDisplay? matchedItem = null;
         var numFilesProcessed = 0;
@@ -296,7 +298,7 @@ public class FileSearch
             var textFileStatus = defaultTextFileInference;
             if (SearchCriteria.HasMetadataCriteria)
             {
-                matchedItem = new FileDisplay(match.Path, TextFileDetection.DetectionResult.Indeterminate, _fileLocationRepository);
+                matchedItem = new FileDisplay(match.Path, TextFileDetection.FileTextTreatment.Indeterminate, _fileLocationRepository);
                 matchedItem.InitializeMetadata();
                 passesMetadataChecks = MeetsMetadataCriteria(matchedItem);
                 textFileStatus = matchedItem.TextFileStatus;
@@ -307,9 +309,9 @@ public class FileSearch
             if (hasTextChecks)
             {
                 string filePath = Path.Combine(_fileLocationRepository.BaseDirectory, match.Path);
-                if (textFileStatus == DetectionResult.Indeterminate)
+                if (textFileStatus == FileTextTreatment.Indeterminate)
                 {
-                    textFileStatus = TextFileDetector.DetectTextFileStatus(filePath);
+                    textFileStatus = TextFileDetector.Instance.Detect(filePath);
                 }
 
                 var checkerState = new bool[textChecks.NumTextChecks]; // false = still evaluating; true already found a match
@@ -371,7 +373,7 @@ public class FileSearch
             if (passesTextCheck
               && passesMetadataChecks)
             {
-                yield return matchedItem ?? new FileDisplay(match.Path, TextFileDetection.DetectionResult.InferredTextFile, _fileLocationRepository);
+                yield return matchedItem ?? new FileDisplay(match.Path, TextFileDetection.FileTextTreatment.InferredTextFile, _fileLocationRepository);
             }
 
             numFilesProcessed++;

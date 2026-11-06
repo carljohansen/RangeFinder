@@ -43,7 +43,7 @@ public static class FileSearcher
     {
         var allFiles = DoSearch(directoryPath, PathCollection.CreateForFullSearch(), excludePatterns);
 
-        var notBinFiles = new PatternMatchingResult(allFiles.Files.Where(fpm => !FileTypeHelper.IsKnownBinaryFile(Path.GetExtension(fpm.Path))));
+        var notBinFiles = new PatternMatchingResult(allFiles.Files.Where(fpm => !TextFileDetection.TextFileDetector.Instance.IsKnownNonTextFileType(fpm.Path)));
         return notBinFiles;
     }
 
