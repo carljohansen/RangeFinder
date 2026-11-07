@@ -128,6 +128,7 @@ public partial class SearchForm : Form
         }
 
         TextCriterionHistoryCollection.Instance.EnsureRefreshed();
+        TextFileDetectorRepository.EnsureUserCopyOfTextFileTypesExists();
         TextFileDetectorRepository.Populate(TextFileDetector.Instance);
 
         var savedTabs = UserSearchRepository.LoadSavedSearches();

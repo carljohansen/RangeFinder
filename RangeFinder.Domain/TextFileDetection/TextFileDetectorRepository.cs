@@ -9,11 +9,28 @@ public static class TextFileDetectorRepository
         return UserSearchRepository.GetDtoFileName("textfiletypes");
     }
 
-    public static void Save() => Save(TextFileDetector.Instance);
-
-    public static void Save(TextFileDetector textFileDetector)
+    public static void EnsureUserCopyOfTextFileTypesExists()
     {
-        // TODO: TextFileDetector.IsDirty.  Otherwise this is very wasteful.
+        var fileName = GetTextFileDetectorFilePath();
+        if (!File.Exists(fileName))
+        {
+            var defaultFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "textfiletypes.json");
+            if (File.Exists(defaultFileName))
+            {
+                File.Copy(defaultFileName, fileName);
+            }
+        }
+    }
+
+    public static void Save(bool force = false) => Save(TextFileDetector.Instance, force);
+
+    public static void Save(TextFileDetector textFileDetector, bool force = false)
+    {
+        if (!textFileDetector.IsDirty && !force)
+        {
+            return;
+        }
+
         var fileName = GetTextFileDetectorFilePath();
 
         var dto = textFileDetector.ToDto();
@@ -21,7 +38,10 @@ public static class TextFileDetectorRepository
         {
             WriteIndented = true
         });
+
         File.WriteAllText(fileName, json);
+
+        textFileDetector.MarkAsSaved();
     }
 
     public static void Populate(TextFileDetector textFileDetector)

@@ -4,8 +4,8 @@ public record TextFileDetectionKey(string? FileName, string? FileExtension)
 {
     public static TextFileDetectionKey FromFilePath(string filePath)
     {
-        var fileName = Path.GetFileName(filePath);
-        var fileExtension = Path.GetExtension(filePath);
+        var fileName = Path.GetFileName(filePath).ToLowerInvariant();
+        var fileExtension = Path.GetExtension(filePath).ToLowerInvariant();
 
         if (fileName == fileExtension)
         {

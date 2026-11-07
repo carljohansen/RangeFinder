@@ -4,18 +4,27 @@ public class TextFileDetector
 {
     public static TextFileDetector Instance { get; } = new TextFileDetector();
 
+    public bool IsDirty { get; private set; } = false;
+
     private readonly Dictionary<TextFileDetectionKey, FileTextTreatment> _cache = [];
 
     private TextFileDetector()
     {
     }
 
-    public void AddRange(IEnumerable<TextFileDetectionKey> keys, FileTextTreatment fileTextTreatment)
+    internal void AddRange(IEnumerable<TextFileDetectionKey> keys, FileTextTreatment fileTextTreatment)
     {
+        // This should not be called from outside of the repository.
         foreach (var key in keys)
         {
             _cache[key] = fileTextTreatment;
         }
+    }
+
+    public void AddCustomEntry(TextFileDetectionKey key, FileTextTreatment fileTextTreatment)
+    {
+        _cache[key] = fileTextTreatment;
+        IsDirty = true;
     }
 
     public TextFileDetectorDto ToDto()
@@ -47,6 +56,7 @@ public class TextFileDetector
         }
         var result = DetectTextFileStatus(filePath);
         _cache[key] = result;
+        IsDirty = true;
 
         return result;
     }
@@ -71,6 +81,11 @@ public class TextFileDetector
         }
 
         return false;
+    }
+
+    public void MarkAsSaved()
+    {
+        IsDirty = false;
     }
 
     private static FileTextTreatment DetectTextFileStatus(string filePath)
