@@ -460,4 +460,14 @@ public partial class SearchForm : Form
 
         currentTab.AdjustContextWindow(-1);
     }
+
+    private void mnuResetContextLines_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.SetContextWindow(0);
+    }
 }

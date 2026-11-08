@@ -49,6 +49,7 @@
             tabToolStripMenuItem = new ToolStripMenuItem();
             mnuMoreContextLines = new ToolStripMenuItem();
             mnuFewerContextLines = new ToolStripMenuItem();
+            mnuResetContextLines = new ToolStripMenuItem();
             mnuTabContext.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -179,7 +180,7 @@
             // 
             // tabToolStripMenuItem
             // 
-            tabToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuMoreContextLines, mnuFewerContextLines });
+            tabToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuMoreContextLines, mnuFewerContextLines, mnuResetContextLines });
             tabToolStripMenuItem.Name = "tabToolStripMenuItem";
             tabToolStripMenuItem.Size = new Size(38, 20);
             tabToolStripMenuItem.Text = "Tab";
@@ -201,6 +202,14 @@
             mnuFewerContextLines.Size = new Size(252, 22);
             mnuFewerContextLines.Text = "Fewer Context Lines";
             mnuFewerContextLines.Click += mnuFewerContextLines_Click;
+            // 
+            // mnuResetContextLines
+            // 
+            mnuResetContextLines.Name = "mnuResetContextLines";
+            mnuResetContextLines.ShortcutKeys = Keys.Control | Keys.D0;
+            mnuResetContextLines.Size = new Size(252, 22);
+            mnuResetContextLines.Text = "Reset Context Lines";
+            mnuResetContextLines.Click += mnuResetContextLines_Click;
             // 
             // SearchForm
             // 
@@ -248,5 +257,6 @@
         private ToolStripMenuItem tabToolStripMenuItem;
         private ToolStripMenuItem mnuMoreContextLines;
         private ToolStripMenuItem mnuFewerContextLines;
+        private ToolStripMenuItem mnuResetContextLines;
     }
 }
