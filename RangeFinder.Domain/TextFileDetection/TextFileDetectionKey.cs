@@ -20,6 +20,11 @@ public record TextFileDetectionKey(string? FileName, string? FileExtension)
         return new TextFileDetectionKey(null, fileExtension);
     }
 
+    public string ToDisplayString()
+    {
+        return FileName ?? FileExtension ?? string.Empty;
+    }
+
     public string ToSerializedString()
     {
         return $"{(FileName == null ? "e" : "f")}:{FileName ?? FileExtension}";

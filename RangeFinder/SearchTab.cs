@@ -2,6 +2,7 @@ using RangeFinder.Controls;
 using RangeFinder.Domain;
 using RangeFinder.Domain.FileType;
 using RangeFinder.Domain.History;
+using RangeFinder.Domain.TextFileDetection;
 using RangeFinder.Domain.TextSearch;
 using RangeFinder.Extensions;
 using System.Collections.Specialized;
@@ -743,9 +744,31 @@ public partial class SearchTab : UserControl
                 // They didn't do a text search,  but the file extension is known to be a text file.
                 enableOpenWithTextEditor = true;
             }
+
+            ConfigureTextTreatmentMenus(selectedFileDisplay);
         }
 
         mnuOpenWithTextEditor.Enabled = enableOpenWithTextEditor;
+    }
+
+    private void ConfigureTextTreatmentMenus(FileDisplay? selectedFileDisplay)
+    {
+        if (selectedFileDisplay == null
+            || selectedFileDisplay.IsFolder())
+        {
+            mnuSetTextTreatment_Header.Enabled = false;
+            mnuSetTextTreatment_Header.Text = "Text Treatment";
+            return;
+        }
+
+        var textDetectorKey = TextFileDetectionKey.FromFilePath(selectedFileDisplay.FullPath);
+        mnuSetTextTreatment_Header.Enabled = true;
+        mnuSetTextTreatment_Header.Text = $"[{textDetectorKey.ToDisplayString()}]";
+
+        var currentTreatment = TextFileDetector.Instance.Get(textDetectorKey);
+        mnuTreatAsText.Checked = currentTreatment is FileTextTreatment.DeclaredTextFile or FileTextTreatment.InferredTextFile;
+        mnuTreatAsNonText.Checked = currentTreatment is FileTextTreatment.DeclaredNonTextFile or FileTextTreatment.InferredNonTextFile;
+        mnuAlwaysEvaluateFile.Checked = currentTreatment is FileTextTreatment.AlwaysEvaluate;
     }
 
     private void txtFilePattern_Enter(object sender, EventArgs e)
@@ -1282,5 +1305,10 @@ public partial class SearchTab : UserControl
             SearchTab.cmbRootDir.Text = value;
             SearchTab.cmbRootDir.FocusWithEndCursor();
         }
+    }
+
+    private void mnuTreatAsText_Click(object sender, EventArgs e)
+    {
+
     }
 }

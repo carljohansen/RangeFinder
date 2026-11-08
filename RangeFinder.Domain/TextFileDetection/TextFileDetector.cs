@@ -47,13 +47,22 @@ public class TextFileDetector
         return dto;
     }
 
+    public FileTextTreatment Get(string filePath) => Get(TextFileDetectionKey.FromFilePath(filePath));
+
+    public FileTextTreatment Get(TextFileDetectionKey key)
+    {
+        return _cache.TryGetValue(key, out var cachedResult) ? cachedResult : FileTextTreatment.Indeterminate;
+    }
+
     public FileTextTreatment Detect(string filePath)
     {
         var key = TextFileDetectionKey.FromFilePath(filePath);
-        if (_cache.TryGetValue(key, out var cachedResult))
+        var cachedResult = Get(key);
+        if (cachedResult != FileTextTreatment.Indeterminate)
         {
             return cachedResult;
         }
+
         var result = DetectTextFileStatus(filePath);
         _cache[key] = result;
         IsDirty = true;
