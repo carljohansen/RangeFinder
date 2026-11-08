@@ -533,6 +533,30 @@ public partial class SearchTab : UserControl
         }
     }
 
+    private void mnuTreatAsText_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+        TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.DeclaredTextFile);
+    }
+
+    private void mnuTreatAsNonText_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+        TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.DeclaredNonTextFile);
+    }
+
+    private void mnuAlwaysEvaluateFile_Click(object sender, EventArgs e)
+    {
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        if (selectedFileDisplay == null)
+            return;
+        TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.AlwaysEvaluate);
+    }
+
     private bool OpenFileInRegisteredApp(int rowIndex)
     {
         var selectedFileDisplay = GetRowFileDisplay(rowIndex);
@@ -729,6 +753,7 @@ public partial class SearchTab : UserControl
     private void grdResult_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
     {
         contextMenuRowIndex = e.RowIndex;
+        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
 
         var enableOpenWithTextEditor = false;
 
@@ -736,17 +761,13 @@ public partial class SearchTab : UserControl
         {
             enableOpenWithTextEditor = true; // We found the text in it, so we assume it's a text file.
         }
-        else
+        else if (selectedFileDisplay?.IsConfirmedTextFile() ?? false)
         {
-            var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
-            if (selectedFileDisplay?.IsConfirmedTextFile() ?? false)
-            {
-                // They didn't do a text search,  but the file extension is known to be a text file.
-                enableOpenWithTextEditor = true;
-            }
-
-            ConfigureTextTreatmentMenus(selectedFileDisplay);
+            // They didn't do a text search,  but the file extension is known to be a text file.
+            enableOpenWithTextEditor = true;
         }
+
+        ConfigureTextTreatmentMenus(selectedFileDisplay);
 
         mnuOpenWithTextEditor.Enabled = enableOpenWithTextEditor;
     }
@@ -761,11 +782,11 @@ public partial class SearchTab : UserControl
             return;
         }
 
-        var textDetectorKey = TextFileDetectionKey.FromFilePath(selectedFileDisplay.FullPath);
+        var textDetectorKey = selectedFileDisplay.GetTextFileDetectionKey();
         mnuSetTextTreatment_Header.Enabled = true;
         mnuSetTextTreatment_Header.Text = $"[{textDetectorKey.ToDisplayString()}]";
 
-        var currentTreatment = TextFileDetector.Instance.Get(textDetectorKey);
+        var currentTreatment = TextFileDetector.Instance.GetRegisteredTreatment(textDetectorKey);
         mnuTreatAsText.Checked = currentTreatment is FileTextTreatment.DeclaredTextFile or FileTextTreatment.InferredTextFile;
         mnuTreatAsNonText.Checked = currentTreatment is FileTextTreatment.DeclaredNonTextFile or FileTextTreatment.InferredNonTextFile;
         mnuAlwaysEvaluateFile.Checked = currentTreatment is FileTextTreatment.AlwaysEvaluate;
@@ -1305,10 +1326,5 @@ public partial class SearchTab : UserControl
             SearchTab.cmbRootDir.Text = value;
             SearchTab.cmbRootDir.FocusWithEndCursor();
         }
-    }
-
-    private void mnuTreatAsText_Click(object sender, EventArgs e)
-    {
-
     }
 }

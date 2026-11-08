@@ -45,6 +45,8 @@ public class FileDisplay
                 : Path.GetDirectoryName(FullPath) ?? string.Empty;
     }
 
+    public TextFileDetectionKey GetTextFileDetectionKey() => TextFileDetectionKey.FromFilePath(FullPath);
+
     public FileDisplay(string relativePath, FileTextTreatment textFileStatus, FileLocationRepository locationRepo)
     {
         FullPath = Path.GetFullPath(Path.Combine(locationRepo.BaseDirectory, relativePath));

@@ -47,9 +47,9 @@ public class TextFileDetector
         return dto;
     }
 
-    public FileTextTreatment Get(string filePath) => Get(TextFileDetectionKey.FromFilePath(filePath));
+    public FileTextTreatment GetRegisteredTreatment(string filePath) => GetRegisteredTreatment(TextFileDetectionKey.FromFilePath(filePath));
 
-    public FileTextTreatment Get(TextFileDetectionKey key)
+    public FileTextTreatment GetRegisteredTreatment(TextFileDetectionKey key)
     {
         return _cache.TryGetValue(key, out var cachedResult) ? cachedResult : FileTextTreatment.Indeterminate;
     }
@@ -57,15 +57,18 @@ public class TextFileDetector
     public FileTextTreatment Detect(string filePath)
     {
         var key = TextFileDetectionKey.FromFilePath(filePath);
-        var cachedResult = Get(key);
-        if (cachedResult != FileTextTreatment.Indeterminate)
+        var registeredTreatment = GetRegisteredTreatment(key);
+        if (registeredTreatment is not FileTextTreatment.Indeterminate and not FileTextTreatment.AlwaysEvaluate)
         {
-            return cachedResult;
+            return registeredTreatment;
         }
 
         var result = DetectTextFileStatus(filePath);
-        _cache[key] = result;
-        IsDirty = true;
+        if (registeredTreatment != FileTextTreatment.AlwaysEvaluate)
+        {
+            _cache[key] = result;
+            IsDirty = true;
+        }
 
         return result;
     }
@@ -86,7 +89,7 @@ public class TextFileDetector
         var key = TextFileDetectionKey.FromFilePath(filePath);
         if (_cache.TryGetValue(key, out var cachedResult))
         {
-            return !cachedResult.IsConfirmedTextFile();
+            return !(cachedResult.IsConfirmedTextFile() || cachedResult == FileTextTreatment.AlwaysEvaluate);
         }
 
         return false;

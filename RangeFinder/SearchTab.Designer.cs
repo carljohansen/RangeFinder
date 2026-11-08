@@ -31,7 +31,7 @@ namespace RangeFinder
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchTab));
             btnSearch = new Button();
             cmbFilePattern = new ComboBox();
@@ -56,6 +56,10 @@ namespace RangeFinder
             mnuFilterByExtensionNewTab = new ToolStripMenuItem();
             mnuUseAsExceptNewTab = new ToolStripMenuItem();
             mnuUseAsBaseDirNewTab = new ToolStripMenuItem();
+            mnuSetTextTreatment_Header = new ToolStripMenuItem();
+            mnuTreatAsText = new ToolStripMenuItem();
+            mnuTreatAsNonText = new ToolStripMenuItem();
+            mnuAlwaysEvaluateFile = new ToolStripMenuItem();
             chkMatchCase = new CheckBox();
             chkMatchWholeWord = new CheckBox();
             label1 = new Label();
@@ -92,10 +96,7 @@ namespace RangeFinder
             btnShowFullPreview = new Button();
             btnHidePreview = new Button();
             mainToolTip = new ToolTip(components);
-            mnuSetTextTreatment_Header = new ToolStripMenuItem();
-            mnuTreatAsText = new ToolStripMenuItem();
-            mnuTreatAsNonText = new ToolStripMenuItem();
-            mnuAlwaysEvaluateFile = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -139,9 +140,9 @@ namespace RangeFinder
             // mnuFileItemContext
             // 
             mnuFileItemContext.ImageScalingSize = new Size(20, 20);
-            mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuUseAsCriterion, mnuSetTextTreatment_Header });
+            mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator4, mnuUseAsCriterion, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuSetTextTreatment_Header });
             mnuFileItemContext.Name = "mnuFileItemContext";
-            mnuFileItemContext.Size = new Size(194, 236);
+            mnuFileItemContext.Size = new Size(194, 220);
             // 
             // mnuOpenFile
             // 
@@ -271,6 +272,34 @@ namespace RangeFinder
             mnuUseAsBaseDirNewTab.Size = new Size(187, 22);
             mnuUseAsBaseDirNewTab.Text = "Look In (New Tab)";
             mnuUseAsBaseDirNewTab.Click += mnuUseAsBaseDirNewTab_Click;
+            // 
+            // mnuSetTextTreatment_Header
+            // 
+            mnuSetTextTreatment_Header.DropDownItems.AddRange(new ToolStripItem[] { mnuTreatAsText, mnuTreatAsNonText, mnuAlwaysEvaluateFile });
+            mnuSetTextTreatment_Header.Name = "mnuSetTextTreatment_Header";
+            mnuSetTextTreatment_Header.Size = new Size(193, 22);
+            mnuSetTextTreatment_Header.Text = "TextTreatment";
+            // 
+            // mnuTreatAsText
+            // 
+            mnuTreatAsText.Name = "mnuTreatAsText";
+            mnuTreatAsText.Size = new Size(180, 22);
+            mnuTreatAsText.Text = "Always A Text File";
+            mnuTreatAsText.Click += mnuTreatAsText_Click;
+            // 
+            // mnuTreatAsNonText
+            // 
+            mnuTreatAsNonText.Name = "mnuTreatAsNonText";
+            mnuTreatAsNonText.Size = new Size(180, 22);
+            mnuTreatAsNonText.Text = "Never A Text File";
+            mnuTreatAsNonText.Click += mnuTreatAsNonText_Click;
+            // 
+            // mnuAlwaysEvaluateFile
+            // 
+            mnuAlwaysEvaluateFile.Name = "mnuAlwaysEvaluateFile";
+            mnuAlwaysEvaluateFile.Size = new Size(180, 22);
+            mnuAlwaysEvaluateFile.Text = "Check Each File";
+            mnuAlwaysEvaluateFile.Click += mnuAlwaysEvaluateFile_Click;
             // 
             // chkMatchCase
             // 
@@ -417,8 +446,8 @@ namespace RangeFinder
             // 
             colSize.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             colSize.DataPropertyName = "SizeDisplay";
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            colSize.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            colSize.DefaultCellStyle = dataGridViewCellStyle1;
             colSize.HeaderText = "Size";
             colSize.MinimumWidth = 6;
             colSize.Name = "colSize";
@@ -661,31 +690,10 @@ namespace RangeFinder
             btnHidePreview.UseVisualStyleBackColor = true;
             btnHidePreview.Click += btnHidePreview_Click;
             // 
-            // mnuSetTextTreatment_Header
+            // toolStripSeparator4
             // 
-            mnuSetTextTreatment_Header.DropDownItems.AddRange(new ToolStripItem[] { mnuTreatAsText, mnuTreatAsNonText, mnuAlwaysEvaluateFile });
-            mnuSetTextTreatment_Header.Name = "mnuSetTextTreatment_Header";
-            mnuSetTextTreatment_Header.Size = new Size(193, 22);
-            mnuSetTextTreatment_Header.Text = "TextTreatment";
-            // 
-            // mnuTreatAsText
-            // 
-            mnuTreatAsText.Name = "mnuTreatAsText";
-            mnuTreatAsText.Size = new Size(180, 22);
-            mnuTreatAsText.Text = "Always A Text File";
-            mnuTreatAsText.Click += mnuTreatAsText_Click;
-            // 
-            // mnuTreatAsNonText
-            // 
-            mnuTreatAsNonText.Name = "mnuTreatAsNonText";
-            mnuTreatAsNonText.Size = new Size(180, 22);
-            mnuTreatAsNonText.Text = "Never A Text File";
-            // 
-            // mnuAlwaysEvaluateFile
-            // 
-            mnuAlwaysEvaluateFile.Name = "mnuAlwaysEvaluateFile";
-            mnuAlwaysEvaluateFile.Size = new Size(180, 22);
-            mnuAlwaysEvaluateFile.Text = "Check Each File";
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(190, 6);
             // 
             // SearchTab
             // 
@@ -797,5 +805,6 @@ namespace RangeFinder
         private ToolStripMenuItem mnuTreatAsText;
         private ToolStripMenuItem mnuTreatAsNonText;
         private ToolStripMenuItem mnuAlwaysEvaluateFile;
+        private ToolStripSeparator toolStripSeparator4;
     }
 }
