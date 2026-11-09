@@ -11,4 +11,6 @@ public interface IFileLineDisplay
     public bool HasMatches { get; }
 
     MatchSegmentDisplay[] GetSegments();
+
+    public bool IsBlank => string.IsNullOrWhiteSpace(Line);
 }

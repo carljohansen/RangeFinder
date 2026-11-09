@@ -627,6 +627,8 @@ public partial class SearchTab : UserControl
 
         if (!fileDisplay.IsConfirmedTextFile())
         {
+            var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
+            nonMatchItem.Tag = new FileLinePlainPreview("No Preview", 0);
             return;
         }
 
@@ -639,8 +641,11 @@ public partial class SearchTab : UserControl
                 if (_currentTextFilePreviewMode == TextFilePreviewMode.FullPreview
                     || currentlyFillingPostContextWindow)
                 {
-                    var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
-                    nonMatchItem.Tag = e.FileLineDisplay;
+                    if (!e.FileLineDisplay.IsBlank)
+                    {
+                        var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
+                        nonMatchItem.Tag = e.FileLineDisplay;
+                    }
                     lineCount++;
                     if (lineCount >= 500)
                     {
@@ -654,7 +659,10 @@ public partial class SearchTab : UserControl
                     return;
                 }
 
-                priorContextWindow.Add(e.FileLineDisplay);
+                if (!e.FileLineDisplay.IsBlank)
+                {
+                    priorContextWindow.Add(e.FileLineDisplay);
+                }
                 return;
             }
 

@@ -279,7 +279,7 @@ public class FileSearch
         var eventStreamTimer = Stopwatch.StartNew();
 
         // Force text searching when they have specified a file name pattern.
-        var defaultTextFileInference = hasSpecifiedFileNamePattern ? FileTextTreatment.InferredTextFile : FileTextTreatment.Indeterminate;
+        var defaultTextFileInference = (hasSpecifiedFileNamePattern && hasTextChecks) ? FileTextTreatment.InferredTextFile : FileTextTreatment.Indeterminate;
 
         FileDisplay? matchedItem = null;
         var numFilesProcessed = 0;
@@ -373,7 +373,7 @@ public class FileSearch
             if (passesTextCheck
               && passesMetadataChecks)
             {
-                yield return matchedItem ?? new FileDisplay(match.Path, TextFileDetection.FileTextTreatment.InferredTextFile, _fileLocationRepository);
+                yield return matchedItem ?? new FileDisplay(match.Path, textFileStatus, _fileLocationRepository);
             }
 
             numFilesProcessed++;

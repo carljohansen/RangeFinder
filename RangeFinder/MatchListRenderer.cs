@@ -39,10 +39,13 @@ internal class MatchListRenderer
 
         if (e.ColumnIndex == 0)
         {
-            // Line Number:
-            string lineNumberText = itemUnderlyingMatches.LineNumber.ToString();
-            Brush brush = _brushes[0];
-            g.DrawString(lineNumberText, highlightFont, brush, e.Bounds.Left + 5, e.Bounds.Top + 3, StringFormat.GenericTypographic);
+            if (itemUnderlyingMatches.LineNumber > 0)
+            {
+                // Line Number:
+                string lineNumberText = itemUnderlyingMatches.LineNumber.ToString();
+                Brush brush = _brushes[0];
+                g.DrawString(lineNumberText, highlightFont, brush, e.Bounds.Left + 5, e.Bounds.Top + 3, StringFormat.GenericTypographic);
+            }
         }
         else
         {

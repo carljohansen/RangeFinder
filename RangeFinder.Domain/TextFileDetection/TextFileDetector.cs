@@ -23,6 +23,11 @@ public class TextFileDetector
 
     public void AddCustomEntry(TextFileDetectionKey key, FileTextTreatment fileTextTreatment)
     {
+        if (fileTextTreatment == FileTextTreatment.Indeterminate)
+        {
+            return; // Ignore this.
+        }
+
         _cache[key] = fileTextTreatment;
         IsDirty = true;
     }
@@ -64,7 +69,7 @@ public class TextFileDetector
         }
 
         var result = DetectTextFileStatus(filePath);
-        if (registeredTreatment != FileTextTreatment.AlwaysEvaluate)
+        if (registeredTreatment is not FileTextTreatment.AlwaysEvaluate and not FileTextTreatment.Indeterminate)
         {
             _cache[key] = result;
             IsDirty = true;
