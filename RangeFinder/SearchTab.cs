@@ -257,7 +257,6 @@ public partial class SearchTab : UserControl
         lstTextMatches.Items.Clear();
         lstTextMatches.Refresh();
         contextMenuRowIndex = -1;
-        _currentPreviewRowIndex = null;
         _searchCancellationTokenSource = new CancellationTokenSource();
 
         if (searchDto.HasTextSearch())
@@ -593,13 +592,6 @@ public partial class SearchTab : UserControl
         MatchListRenderer.Instance.DrawMatchListViewSubItem(itemUnderlyingMatches, lstTextMatches, e);
     }
 
-    private void grdResult_RowEnter(object sender, DataGridViewCellEventArgs e)
-    {
-        //HandleGridRowEnter(e.RowIndex);
-    }
-
-    private int? _currentPreviewRowIndex = null;
-
     private void HandleGridRowEnter(int rowIndex)
     {
         SlidingWindow<IFileLineDisplay> priorContextWindow = new(ContextWindowSize);
@@ -620,9 +612,6 @@ public partial class SearchTab : UserControl
         {
             return;
         }
-
-        _currentPreviewRowIndex = rowIndex;
-        Debug.WriteLine($"RowEnter: rowIndex={rowIndex}");
 
         lstTextMatches.Items.Clear();
 
@@ -1335,27 +1324,6 @@ public partial class SearchTab : UserControl
             SearchTab.cmbRootDir.Text = value;
             SearchTab.cmbRootDir.FocusWithEndCursor();
         }
-    }
-
-    private void grdResult_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
-    {
-        var x = e.Row.Index;
-        var y = e.StateChanged.HasFlag(DataGridViewElementStates.Selected);
-        //  Debug.WriteLine($"RowStateChanged: Row {x}, Selected: {y}");
-    }
-
-    private void grdResult_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-    {
-        //var x = grdResult.CurrentRow;
-        //var insertionIndex = e.RowIndex;
-        //if (_currentPreviewRowIndex != null && insertionIndex < _currentPreviewRowIndex)
-        //{
-        //    var deselectIndex = _currentPreviewRowIndex.Value;
-        //    var selectIndex = deselectIndex + 1;
-        //    _currentPreviewRowIndex++;
-        //    grdResult.Rows[deselectIndex].Selected = false;
-        //    grdResult.Rows[selectIndex].Selected = true;
-        //}
     }
 
     private void grdResult_SelectionChanged(object sender, EventArgs e)

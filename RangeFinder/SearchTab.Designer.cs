@@ -402,9 +402,6 @@ namespace RangeFinder
             grdResult.CellToolTipTextNeeded += grdResult_CellToolTipTextNeeded;
             grdResult.ColumnHeaderMouseClick += grdResult_ColumnHeaderMouseClick;
             grdResult.ColumnWidthChanged += grdResult_ColumnWidthChanged;
-            grdResult.RowEnter += grdResult_RowEnter;
-            grdResult.RowsAdded += grdResult_RowsAdded;
-            grdResult.RowStateChanged += grdResult_RowStateChanged;
             grdResult.SelectionChanged += grdResult_SelectionChanged;
             grdResult.Sorted += grdResult_Sorted;
             grdResult.MouseEnter += grdResult_MouseEnter;
