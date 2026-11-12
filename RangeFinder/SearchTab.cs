@@ -257,6 +257,7 @@ public partial class SearchTab : UserControl
         lstTextMatches.Items.Clear();
         lstTextMatches.Refresh();
         contextMenuRowIndex = -1;
+        _currentPreviewRowIndex = null;
         _searchCancellationTokenSource = new CancellationTokenSource();
 
         if (searchDto.HasTextSearch())
@@ -594,8 +595,10 @@ public partial class SearchTab : UserControl
 
     private void grdResult_RowEnter(object sender, DataGridViewCellEventArgs e)
     {
-        HandleGridRowEnter(e.RowIndex);
+        //HandleGridRowEnter(e.RowIndex);
     }
+
+    private int? _currentPreviewRowIndex = null;
 
     private void HandleGridRowEnter(int rowIndex)
     {
@@ -603,11 +606,6 @@ public partial class SearchTab : UserControl
         var postContextLinesAdded = 0;
 
         if (rowIndex < 0)
-        {
-            return;
-        }
-
-        if (_isSearchInProgress)
         {
             return;
         }
@@ -622,6 +620,9 @@ public partial class SearchTab : UserControl
         {
             return;
         }
+
+        _currentPreviewRowIndex = rowIndex;
+        Debug.WriteLine($"RowEnter: rowIndex={rowIndex}");
 
         lstTextMatches.Items.Clear();
 
@@ -1333,6 +1334,50 @@ public partial class SearchTab : UserControl
         {
             SearchTab.cmbRootDir.Text = value;
             SearchTab.cmbRootDir.FocusWithEndCursor();
+        }
+    }
+
+    private void grdResult_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+    {
+        var x = e.Row.Index;
+        var y = e.StateChanged.HasFlag(DataGridViewElementStates.Selected);
+        //  Debug.WriteLine($"RowStateChanged: Row {x}, Selected: {y}");
+    }
+
+    private void grdResult_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+    {
+        //var x = grdResult.CurrentRow;
+        //var insertionIndex = e.RowIndex;
+        //if (_currentPreviewRowIndex != null && insertionIndex < _currentPreviewRowIndex)
+        //{
+        //    var deselectIndex = _currentPreviewRowIndex.Value;
+        //    var selectIndex = deselectIndex + 1;
+        //    _currentPreviewRowIndex++;
+        //    grdResult.Rows[deselectIndex].Selected = false;
+        //    grdResult.Rows[selectIndex].Selected = true;
+        //}
+    }
+
+    private void grdResult_SelectionChanged(object sender, EventArgs e)
+    {
+        var selectedRows = grdResult.SelectedRows;
+        if (selectedRows.Count != 1)
+        {
+            return;
+        }
+        var selectedRow = selectedRows[0];
+        HandleGridRowEnter(selectedRow.Index);
+    }
+
+    private void grdResult_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+        if (e.ColumnIndex == 0)
+        {
+            if (grdResult.DataSource is BindingSource gridDataSource)
+            {
+                gridDataSource.Sort = null;
+                grdResult.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.None;
+            }
         }
     }
 }

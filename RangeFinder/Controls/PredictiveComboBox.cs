@@ -62,6 +62,7 @@ public class PredictiveComboBox : ComboBox
             DroppedDown = true;
         }
 
+        SelectionLength = 0;
         SelectionStart = Math.Min(caretPos, Text.Length);
     }
 }

@@ -7,7 +7,7 @@ public class SearchResultDataGridView : DataGridView
 {
     public int LocationColumnIndex => _locationColIndex;
 
-    private int _locationColIndex = -1;   
+    private int _locationColIndex = -1;
 
     public void Initialize()
     {
@@ -76,8 +76,11 @@ public class SearchResultDataGridView : DataGridView
         var numMatches = Rows.Count;
         if (numMatches > 0)
         {
-            Rows[0].Selected = true;
-            CurrentCell = Rows[0].Cells[0];
+            if (SelectedRows.Count == 0)
+            {
+                Rows[0].Selected = true;
+                CurrentCell = Rows[0].Cells[0];
+            }
             Focus();
             return true;
         }
