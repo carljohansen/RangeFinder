@@ -1387,16 +1387,28 @@ public partial class SearchTab : UserControl
 
     private void ShowLineGrabTextBox()
     {
-        var item = lstTextMatches.SelectedItems[0];
+        ListViewItem focusedItem;
+        if (lstTextMatches.SelectedItems.Count == 1)
+        {
+            focusedItem = lstTextMatches.SelectedItems[0];
+        }
+        else if (lstTextMatches.FocusedItem != null)
+        {
+            focusedItem = lstTextMatches.FocusedItem;
+        }
+        else
+        {
+            return;
+        }
 
-        var itemUnderlyingMatches = item.Tag as IFileLineDisplay;
+        var itemUnderlyingMatches = focusedItem.Tag as IFileLineDisplay;
 
 
         // Get item bounds in client coordinates
-        Rectangle itemBounds = new(item.Bounds.Left,
-                                    item.Bounds.Top,
-                                    lstTextMatches.Width - item.Bounds.Left,
-                                    item.Bounds.Height);
+        Rectangle itemBounds = new(focusedItem.Bounds.Left,
+                                    focusedItem.Bounds.Top,
+                                    lstTextMatches.Width - focusedItem.Bounds.Left,
+                                    focusedItem.Bounds.Height);
 
         txtLineGrab.Visible = true;
         txtLineGrab.SetBounds(itemBounds.Left, itemBounds.Top, itemBounds.Width, itemBounds.Height);
