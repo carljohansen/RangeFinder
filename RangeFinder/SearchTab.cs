@@ -594,6 +594,8 @@ public partial class SearchTab : UserControl
 
     private void HandleGridRowEnter(int rowIndex)
     {
+        HideLineGrabTextBox();
+
         SlidingWindow<IFileLineDisplay> priorContextWindow = new(ContextWindowSize);
         var postContextLinesAdded = 0;
 
@@ -843,11 +845,6 @@ public partial class SearchTab : UserControl
         EnableDisableExclusions();
     }
 
-    private void toolStripStatusLabel1_Click(object sender, EventArgs e)
-    {
-
-    }
-
     private void btnCancelSearch_Click(object sender, EventArgs e)
     {
         _searchCancellationTokenSource?.Cancel();
@@ -900,7 +897,49 @@ public partial class SearchTab : UserControl
             return true;
         }
 
+        if (keyData == (Keys.Control | Keys.R))
+        {
+            // Ctrl+R = put focus on Result list.
+            grdResult.Focus();
+            return true;
+        }
+
+        if (keyData == (Keys.Control | Keys.P))
+        {
+            // Ctrl+P = put focus on Preview window.
+            FocusOnPreview();
+            return true;
+        }
+
+        if (keyData == Keys.F2
+            && lstTextMatches.Focused
+            && !txtLineGrab.Visible)
+        {
+            // F2 = like "rename"
+            ShowLineGrabTextBox();
+            return true;
+        }
+
+        if (keyData == Keys.Escape
+            && txtLineGrab.Visible)
+        {
+            HideLineGrabTextBox();
+            lstTextMatches.Focus();
+            return true;
+        }
+
         return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    private void FocusOnPreview()
+    {
+        if (_currentTextFilePreviewMode == TextFilePreviewMode.None)
+        {
+            SetPreviewMode(TextFilePreviewMode.FullPreview);
+        }
+
+        HideLineGrabTextBox();
+        lstTextMatches.Focus();
     }
 
     public void CancelSearch()
@@ -969,10 +1008,6 @@ public partial class SearchTab : UserControl
         }
     }
 
-    private void lstTextMatches_SelectedIndexChanged(object sender, EventArgs e)
-    {
-    }
-
 
     private void spltResultPanel_Panel1_Resize(object sender, EventArgs e)
     {
@@ -993,10 +1028,6 @@ public partial class SearchTab : UserControl
         {
             return;
         }
-    }
-
-    private void spltResultPanel_SizeChanged(object sender, EventArgs e)
-    {
     }
 
     private void grdResult_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
@@ -1347,5 +1378,43 @@ public partial class SearchTab : UserControl
                 grdResult.Columns[0].HeaderCell.SortGlyphDirection = SortOrder.None;
             }
         }
+    }
+
+    private void lstTextMatches_ItemActivate(object sender, EventArgs e)
+    {
+        ShowLineGrabTextBox();
+    }
+
+    private void ShowLineGrabTextBox()
+    {
+        var item = lstTextMatches.SelectedItems[0];
+
+        var itemUnderlyingMatches = item.Tag as IFileLineDisplay;
+
+
+        // Get item bounds in client coordinates
+        Rectangle itemBounds = new(item.Bounds.Left,
+                                    item.Bounds.Top,
+                                    lstTextMatches.Width - item.Bounds.Left,
+                                    item.Bounds.Height);
+
+        txtLineGrab.Visible = true;
+        txtLineGrab.SetBounds(itemBounds.Left, itemBounds.Top, itemBounds.Width, itemBounds.Height);
+        txtLineGrab.BringToFront();
+        txtLineGrab.Text = itemUnderlyingMatches!.Line;
+        txtLineGrab.Focus();
+        txtLineGrab.SelectAll();
+    }
+
+    private void HideLineGrabTextBox()
+    {
+        txtLineGrab.Visible = false;
+        txtLineGrab.Text = "";
+        txtLineGrab.SendToBack();
+    }
+
+    private void lstTextMatches_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+        HideLineGrabTextBox();
     }
 }
