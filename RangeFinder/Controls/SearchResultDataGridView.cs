@@ -39,11 +39,11 @@ public class SearchResultDataGridView : DataGridView
         Columns[_locationColIndex].Width = Math.Max(50, newWidth - fixedColWidths);
     }
 
-    public FileDisplay? GetRowFileDisplay(int rowIndex)
+    public FileDisplay? GetRowFileDisplay(int? rowIndex)
     {
-        if (rowIndex < 0)
+        if (rowIndex < 0 || rowIndex == null)
             return null;
-        var selectedRow = Rows[rowIndex];
+        var selectedRow = Rows[rowIndex.Value];
         return (selectedRow.DataBoundItem is DataRowView view && view.Row["FileDisplay"] is FileDisplay fileDisplay) ? fileDisplay : null;
     }
 

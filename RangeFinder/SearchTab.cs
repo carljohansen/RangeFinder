@@ -36,7 +36,7 @@ public partial class SearchTab : UserControl
 
     private TextFilePreviewMode _currentTextFilePreviewMode;
 
-    private int contextMenuRowIndex = -1;
+    private int? _contextMenuRowIndex = null;
 
     private bool _anchorByHandInitialized = false;
     private bool _readyToInitializeAnchorByHand = false;
@@ -62,6 +62,8 @@ public partial class SearchTab : UserControl
         var resultTable = SearchResultDataTableHelper.CreateFileResultDataTableColumns();
         var searchResultDataSource = new BindingSource(resultTable.DefaultView, null!);
         _currentSearch = new(resultTable, 50, new Progress<SearchProgressReportArgs>(HandleSearchStatusUpdate));
+
+        lstTextMatches.MouseWheel += (s, e) => HideLineGrabTextBox();
 
         grdResult.AutoGenerateColumns = false;
         grdResult.DataSource = searchResultDataSource;
@@ -179,9 +181,19 @@ public partial class SearchTab : UserControl
         }
     }
 
-    private FileDisplay? GetRowFileDisplay(int rowIndex)
+    private FileDisplay? GetRowFileDisplay(int? rowIndex)
     {
         return grdResult.GetRowFileDisplay(rowIndex);
+    }
+
+    private FileDisplay? GetSingleSelectedRowFileDisplay()
+    {
+        if (grdResult.SelectedRows.Count != 1)
+        {
+            return null;
+        }
+
+        return grdResult.GetRowFileDisplay(grdResult.SelectedRows[0].Index);
     }
 
     private void HandleSearchStatusUpdate(SearchProgressReportArgs e)
@@ -211,6 +223,11 @@ public partial class SearchTab : UserControl
 
     public void SetProgress(int progressPercentage)
     {
+        if (TabProgressBar.IsDisposed)
+        {
+            return;
+        }
+
         TabProgressBar.Visible = true;
         if (progressPercentage < 0)
         {
@@ -244,6 +261,7 @@ public partial class SearchTab : UserControl
         else
         {
             cmbRootDir.BackColor = default;
+            grdResult.Focus();
         }
 
         SetStatusText("Searching...");
@@ -256,7 +274,7 @@ public partial class SearchTab : UserControl
         RaiseFilesFoundUpdate(-1, searchStatus: FileSearchStatus.Running, searchIncludesFolders: searchDto.IncludeFolders);
         lstTextMatches.Items.Clear();
         lstTextMatches.Refresh();
-        contextMenuRowIndex = -1;
+        _contextMenuRowIndex = -1;
         _searchCancellationTokenSource = new CancellationTokenSource();
 
         if (searchDto.HasTextSearch())
@@ -318,10 +336,10 @@ public partial class SearchTab : UserControl
         btnSearch.Enabled = true;
         btnCancelSearch.Enabled = false;
 
-        if (!grdResult.FocusAfterSearch())
-        {
-            btnSearch.Focus();
-        }
+        //if (!grdResult.FocusAfterSearch())
+        //{
+        //    btnSearch.Focus();
+        //}
 
         HideProgressBar();
         lblElapsedTime.Visible = true;
@@ -463,7 +481,7 @@ public partial class SearchTab : UserControl
 
     private void mnuShowInExplorer_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
         if (selectedFileDisplay == null)
             return;
 
@@ -496,7 +514,7 @@ public partial class SearchTab : UserControl
 
     private void mnuOpenWithTextEditor_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetSingleSelectedRowFileDisplay();
         if (selectedFileDisplay == null)
             return;
 
@@ -515,12 +533,12 @@ public partial class SearchTab : UserControl
 
     private void mnuOpenFile_Click(object sender, EventArgs e)
     {
-        _ = OpenFileInRegisteredApp(contextMenuRowIndex);
+        _ = OpenFileInRegisteredApp(_contextMenuRowIndex);
     }
 
     private void mnuExcludeThisFolder_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
         if (selectedFileDisplay == null)
             return;
 
@@ -535,7 +553,7 @@ public partial class SearchTab : UserControl
 
     private void mnuTreatAsText_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
         if (selectedFileDisplay == null)
             return;
         TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.DeclaredTextFile);
@@ -543,7 +561,7 @@ public partial class SearchTab : UserControl
 
     private void mnuTreatAsNonText_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
         if (selectedFileDisplay == null)
             return;
         TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.DeclaredNonTextFile);
@@ -551,13 +569,13 @@ public partial class SearchTab : UserControl
 
     private void mnuAlwaysEvaluateFile_Click(object sender, EventArgs e)
     {
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
         if (selectedFileDisplay == null)
             return;
         TextFileDetector.Instance.UpdateAndSave(selectedFileDisplay, FileTextTreatment.AlwaysEvaluate);
     }
 
-    private bool OpenFileInRegisteredApp(int rowIndex)
+    private bool OpenFileInRegisteredApp(int? rowIndex)
     {
         var selectedFileDisplay = GetRowFileDisplay(rowIndex);
         if (selectedFileDisplay == null)
@@ -625,6 +643,7 @@ public partial class SearchTab : UserControl
         }
 
         var lineCount = 0;
+        var maxLineNumber = 0;
         var currentlyFillingPostContextWindow = false;
         _currentSearch.GetMatches(fileDisplay.FullPath, _currentTextFilePreviewMode, e =>
         {
@@ -636,6 +655,7 @@ public partial class SearchTab : UserControl
                     if (!e.FileLineDisplay.IsBlank)
                     {
                         var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
+                        maxLineNumber = Math.Max(maxLineNumber, e.FileLineDisplay.LineNumber);
                         nonMatchItem.Tag = e.FileLineDisplay;
                     }
                     lineCount++;
@@ -668,8 +688,11 @@ public partial class SearchTab : UserControl
             currentlyFillingPostContextWindow = ContextWindowSize > 0;
             postContextLinesAdded = 0;
             var newItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
+            maxLineNumber = Math.Max(maxLineNumber, e.FileLineDisplay.LineNumber);
             newItem.Tag = e.FileLineDisplay;
         });
+
+        ResizePreviewLineNumberColumn(maxLineNumber);
     }
 
     private void SearchTab_Load(object sender, EventArgs e)
@@ -706,6 +729,12 @@ public partial class SearchTab : UserControl
         ResizeResultsGrid();
 
         cmbFilePattern.Select();
+    }
+
+    private void ResizePreviewLineNumberColumn(int maxLineNumber)
+    {
+        var lineNumberWidth = TextRenderer.MeasureText(maxLineNumber.ToString(), lstTextMatches.Font).Width + 10;
+        lstTextMatches.Columns[0].Width = lineNumberWidth;
     }
 
     private static void AlignBaselines(Control textControl, Control checkControl)
@@ -752,8 +781,8 @@ public partial class SearchTab : UserControl
 
     private void grdResult_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
     {
-        contextMenuRowIndex = e.RowIndex;
-        var selectedFileDisplay = GetRowFileDisplay(contextMenuRowIndex);
+        _contextMenuRowIndex = e.RowIndex;
+        var selectedFileDisplay = GetRowFileDisplay(_contextMenuRowIndex);
 
         var enableOpenWithTextEditor = false;
 
@@ -1268,7 +1297,7 @@ public partial class SearchTab : UserControl
     {
         protected override string? PropertyRetriever()
         {
-            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab._contextMenuRowIndex);
             return fileDisplay == null ? null : Path.GetFileName(fileDisplay.FullPath);
         }
         protected override void NewTabApplier(string value, UserTabState newTabState)
@@ -1285,7 +1314,7 @@ public partial class SearchTab : UserControl
     {
         protected override string? PropertyRetriever()
         {
-            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab._contextMenuRowIndex);
             return fileDisplay == null ? null : $"*{Path.GetExtension(fileDisplay.FullPath)}";
         }
         protected override void NewTabApplier(string value, UserTabState newTabState)
@@ -1302,7 +1331,7 @@ public partial class SearchTab : UserControl
     {
         protected override string? PropertyRetriever()
         {
-            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            var fileDisplay = SearchTab.GetRowFileDisplay(SearchTab._contextMenuRowIndex);
             if (fileDisplay == null)
                 return null;
 
@@ -1330,7 +1359,7 @@ public partial class SearchTab : UserControl
     {
         protected override string? PropertyRetriever()
         {
-            var selectedFileDisplay = SearchTab.GetRowFileDisplay(SearchTab.contextMenuRowIndex);
+            var selectedFileDisplay = SearchTab.GetRowFileDisplay(SearchTab._contextMenuRowIndex);
             if (selectedFileDisplay == null)
                 return null;
 
@@ -1364,6 +1393,9 @@ public partial class SearchTab : UserControl
         {
             return;
         }
+
+        _contextMenuRowIndex = null;
+        mnuOpenWithTextEditor.Enabled = true; // Allow shortcut key to fire (without Needed running first).
         var selectedRow = selectedRows[0];
         HandleGridRowEnter(selectedRow.Index);
     }
@@ -1385,6 +1417,8 @@ public partial class SearchTab : UserControl
         ShowLineGrabTextBox();
     }
 
+    private int? _lineGrabHighlightIndex = null;
+
     private void ShowLineGrabTextBox()
     {
         ListViewItem focusedItem;
@@ -1403,17 +1437,17 @@ public partial class SearchTab : UserControl
 
         var itemUnderlyingMatches = focusedItem.Tag as IFileLineDisplay;
 
-
         // Get item bounds in client coordinates
         Rectangle itemBounds = new(focusedItem.Bounds.Left,
                                     focusedItem.Bounds.Top,
                                     lstTextMatches.Width - focusedItem.Bounds.Left,
                                     focusedItem.Bounds.Height);
 
+        _lineGrabHighlightIndex = lstTextMatches.SelectedIndices[0];
         txtLineGrab.Visible = true;
         txtLineGrab.SetBounds(itemBounds.Left, itemBounds.Top, itemBounds.Width, itemBounds.Height);
         txtLineGrab.BringToFront();
-        txtLineGrab.Text = itemUnderlyingMatches!.Line;
+        txtLineGrab.Text = itemUnderlyingMatches!.Line.TrimStart();
         txtLineGrab.Focus();
         txtLineGrab.SelectAll();
     }
@@ -1423,9 +1457,21 @@ public partial class SearchTab : UserControl
         txtLineGrab.Visible = false;
         txtLineGrab.Text = "";
         txtLineGrab.SendToBack();
+        _lineGrabHighlightIndex = null;
     }
 
     private void lstTextMatches_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+        if (_lineGrabHighlightIndex.HasValue
+            && e.ItemIndex == _lineGrabHighlightIndex)
+        {
+            return;
+        }
+
+        HideLineGrabTextBox();
+    }
+
+    private void lstTextMatches_Scroll(object sender, ScrollEventArgs e)
     {
         HideLineGrabTextBox();
     }

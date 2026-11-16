@@ -19,6 +19,10 @@ public class FileSearch
 
     private readonly IProgress<SearchProgressReportArgs>? _progressCallback = null;
 
+    private readonly List<FileLineTextMatch> _currentAccumulation = [];
+    private FileLineTextMatch? _firstMatchOfCurrentAccumulation = null;
+    private int _currentAccumulationLineNumber = -1;
+
     public UserSearchDto? SearchCriteria { get; private set; }
 
     public FileSearch(DataTable dataTable, int locationDisplayLength, IProgress<SearchProgressReportArgs>? progressCallback)
@@ -431,12 +435,78 @@ public class FileSearch
             return;
         }
 
+        var accumulatingMatchAction = CreateAccumulatedMatchFunction(matchAction);
+        _currentAccumulationLineNumber = -1;
+        _firstMatchOfCurrentAccumulation = null;
+        _currentAccumulation.Clear();
+
         try
         {
             var matcher = new FileMatcher(null, TextSearches);
-            matcher.GetMatches(filePath, matchAction);
+            matcher.GetMatches(filePath, accumulatingMatchAction);
+            accumulatingMatchAction(null); // Publish the last line.
         }
         catch { }
+    }
+
+    private Action<PreviewLineGeneratedEventArgs?> CreateAccumulatedMatchFunction(Action<PreviewLineGeneratedEventArgs> forwardToAction)
+    {
+        return e => AccumulatedMatchAction(e, forwardToAction);
+    }
+
+    private void AccumulatedMatchAction(PreviewLineGeneratedEventArgs? singleMatchEvent, Action<PreviewLineGeneratedEventArgs> forwardToAction)
+    {
+        var atEof = singleMatchEvent == null;
+
+        if (atEof
+            || singleMatchEvent!.FileLineDisplay.LineNumber != _currentAccumulationLineNumber)
+        {
+            if (_currentAccumulation.Count == 0)
+            {
+                // 99% of the time this is the case
+                if (_firstMatchOfCurrentAccumulation != null)
+                {
+                    forwardToAction(new(_firstMatchOfCurrentAccumulation)); // TODO: wasteful
+                }
+            }
+            else
+            {
+                var newMultiMatchItems = _currentAccumulation.OrderBy(x => x.StartPos).ToList();
+                FileLineTextMultiMatch multiMatch = new(newMultiMatchItems);
+                forwardToAction(new(multiMatch));
+                _currentAccumulation.Clear();
+            }
+
+            if (atEof)
+            {
+                return;
+            }
+
+            _firstMatchOfCurrentAccumulation = null; // Start a new line.
+        }
+
+        if (singleMatchEvent!.FileLineDisplay is not FileLineTextMatch currentEventFileLineTextMatch)
+        {
+            // Context line, not a match.
+            forwardToAction(singleMatchEvent);
+            return;
+        }
+
+        _currentAccumulationLineNumber = singleMatchEvent.FileLineDisplay.LineNumber;
+
+        if (_firstMatchOfCurrentAccumulation == null)
+        {
+            _firstMatchOfCurrentAccumulation = currentEventFileLineTextMatch;
+        }
+        else
+        {
+            // Multi-match!
+            if (_currentAccumulation.Count == 0)
+            {
+                _currentAccumulation.Add(_firstMatchOfCurrentAccumulation);
+            }
+            _currentAccumulation.Add(currentEventFileLineTextMatch);
+        }
     }
 
     private int FileLineTextMatchSorter(IFileLineDisplay x, IFileLineDisplay y)
