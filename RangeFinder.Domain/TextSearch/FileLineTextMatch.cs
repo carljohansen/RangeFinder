@@ -6,8 +6,6 @@ namespace RangeFinder.Domain.TextSearch;
 
 public record FileLineTextMatch(string Line, int LineNumber, int StartPos, int Length, AtomicTextMatch Source) : IFileLineDisplay
 {
-    public int SecondarySortKey => Source.Index;
-
     public bool HasMatches => true;
 
     public MatchSegmentDisplay[] GetSegments()

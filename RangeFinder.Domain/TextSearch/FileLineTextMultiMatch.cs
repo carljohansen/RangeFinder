@@ -6,8 +6,6 @@ public record FileLineTextMultiMatch(List<FileLineTextMatch> Matches) : IFileLin
 
     public string Line => Matches[0].Line;
 
-    public int SecondarySortKey => Matches[0].SecondarySortKey;
-
     public bool HasMatches => true;
 
     public bool HasOverlaps()

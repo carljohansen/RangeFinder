@@ -526,12 +526,4 @@ public class FileSearch
             _currentAccumulation.Add(currentEventFileLineTextMatch);
         }
     }
-
-    private int FileLineTextMatchSorter(IFileLineDisplay x, IFileLineDisplay y)
-    {
-        var lineNumCompare = x.LineNumber.CompareTo(y.LineNumber);
-        if (lineNumCompare != 0)
-            return lineNumCompare;
-        return x.SecondarySortKey.CompareTo(y.SecondarySortKey);
-    }
 }

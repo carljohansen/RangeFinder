@@ -6,8 +6,6 @@ public interface IFileLineDisplay
 
     public string Line { get; }
 
-    public int SecondarySortKey { get; }
-
     public bool HasMatches { get; }
 
     MatchSegmentDisplay[] GetSegments();
