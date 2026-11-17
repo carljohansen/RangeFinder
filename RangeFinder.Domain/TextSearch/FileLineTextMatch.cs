@@ -47,12 +47,12 @@ public record FileLineTextMatch(string Line, int LineNumber, int StartPos, int L
 
         if (contextStringStartPos > numLeadingSpaces)
         {
-            optimizedLine = "..." + optimizedLine;
-            optimizedStartPos += 3; // Adjust for the added ellipsis
+            optimizedLine = "…" + optimizedLine;
+            optimizedStartPos += 1; // Adjust for the added ellipsis
         }
         if (contextStringEndPos < Line.Length)
         {
-            optimizedLine += "...";
+            optimizedLine += "…";
         }
         return (optimizedLine, optimizedStartPos);
     }
