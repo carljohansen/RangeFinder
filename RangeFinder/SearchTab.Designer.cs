@@ -98,6 +98,7 @@ namespace RangeFinder
             btnShowFullPreview = new Button();
             btnHidePreview = new Button();
             mainToolTip = new ToolTip(components);
+            searchStatsToolTip = new ToolTip(components);
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -143,7 +144,7 @@ namespace RangeFinder
             mnuFileItemContext.ImageScalingSize = new Size(20, 20);
             mnuFileItemContext.Items.AddRange(new ToolStripItem[] { mnuOpenFile, mnuOpenWithTextEditor, mnuShowInExplorer, toolStripSeparator4, mnuUseAsCriterion, toolStripSeparator1, mnuCopyPath, mnuCopyFolderPath, mnuCopyFiles, mnuDeleteItem, toolStripSeparator2, mnuSetTextTreatment_Header });
             mnuFileItemContext.Name = "mnuFileItemContext";
-            mnuFileItemContext.Size = new Size(215, 242);
+            mnuFileItemContext.Size = new Size(215, 220);
             //
             // mnuOpenFile
             //
@@ -643,7 +644,7 @@ namespace RangeFinder
             // lblStatusStripSpring
             //
             lblStatusStripSpring.Name = "lblStatusStripSpring";
-            lblStatusStripSpring.Size = new Size(869, 17);
+            lblStatusStripSpring.Size = new Size(713, 17);
             lblStatusStripSpring.Spring = true;
             //
             // lblFilesFound
@@ -825,5 +826,6 @@ namespace RangeFinder
         private ToolStripMenuItem mnuAlwaysEvaluateFile;
         private ToolStripSeparator toolStripSeparator4;
         private TextBox txtLineGrab;
+        private ToolTip searchStatsToolTip;
     }
 }

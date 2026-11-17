@@ -202,6 +202,13 @@ public partial class SearchTab : UserControl
         {
             return;
         }
+
+        if (e.NumFilesBeforeTextMatch.HasValue)
+        {
+            lblFilesFound.ToolTipText = $"Files scanned: {e.NumFilesBeforeTextMatch}";
+            return;
+        }
+
         SetStatusText(e.StatusMessage);
         SetProgress(e.ProgressPercentage);
         RaiseFilesFoundUpdate(searchStatus: FileSearchStatus.Running, searchIncludesFolders: _currentSearch.SearchCriteria?.IncludeFolders ?? false);
@@ -268,6 +275,7 @@ public partial class SearchTab : UserControl
         var gridTotalWidthBeforeSearch = ResultGridTotalWidth();
         btnSearch.Enabled = false;
         btnCancelSearch.Enabled = true;
+        lblFilesFound.ToolTipText = null;
         _isSearchInProgress = true;
         CollapseDropdowns();
         SetProgress(0);

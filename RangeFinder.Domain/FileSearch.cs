@@ -264,6 +264,13 @@ public class FileSearch
         {
             yield return match;
         }
+
+        _progressCallback?.Report(new SearchProgressReportArgs
+        {
+            StatusMessage = "Finished",
+            NumFilesBeforeTextMatch = rawFiles.Files.Count(),
+            ProgressPercentage = 100
+        });
     }
 
     private async IAsyncEnumerable<FileDisplay> ProcessFiles(string baseDirectory,
@@ -473,7 +480,18 @@ public class FileSearch
             {
                 var newMultiMatchItems = _currentAccumulation.OrderBy(x => x.StartPos).ToList();
                 FileLineTextMultiMatch multiMatch = new(newMultiMatchItems);
-                forwardToAction(new(multiMatch));
+                if (multiMatch.HasOverlaps())
+                {
+                    // can't get fancy; will repeatt the line for each match
+                    foreach (var match in newMultiMatchItems)
+                    {
+                        forwardToAction(new(match));
+                    }
+                }
+                else
+                {
+                    forwardToAction(new(multiMatch));
+                }
                 _currentAccumulation.Clear();
             }
 
