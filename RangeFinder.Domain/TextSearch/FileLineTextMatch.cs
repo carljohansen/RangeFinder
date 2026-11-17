@@ -70,4 +70,7 @@ public record FileLineTextMatch(string Line, int LineNumber, int StartPos, int L
     }
 }
 
-public record MatchSegmentDisplay(string SegmentText, int SegmentColourIndex);
+public record MatchSegmentDisplay(string SegmentText, int SegmentBackgroundColourIndex)
+{
+    public int SegmentTextColourIndex => SegmentBackgroundColourIndex == 1 ? 1 : 0; // 1 = dark gray, 0 = black
+}

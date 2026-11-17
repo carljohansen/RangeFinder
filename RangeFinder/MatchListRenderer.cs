@@ -7,7 +7,9 @@ internal class MatchListRenderer
 {
     private Font? _highlightFont;
 
-    private readonly Brush[] _brushes = [.. new[] { Color.Black, Color.DarkGray, Color.Orange, Color.FromArgb(unchecked((int)0xFFE0B0FF)), Color.CornflowerBlue, Color.DarkKhaki, Color.Green }.Select(c => new SolidBrush(c))];
+    private readonly Size _cornerRadius = new(9, 9);
+
+    private readonly Brush[] _brushes = [.. new[] { Color.Black, Color.DarkGray, Color.Orange, Color.FromArgb(unchecked((int)0xFFE0B0FF)), Color.LightBlue, Color.Khaki, Color.GreenYellow }.Select(c => new SolidBrush(c))];
 
     public readonly static MatchListRenderer Instance = new();
 
@@ -57,14 +59,14 @@ internal class MatchListRenderer
             foreach (var segment in textSegments)
             {
                 string segmentText = segment.SegmentText;
-                Brush backgroundBrush = _brushes[Math.Min(segment.SegmentColourIndex, _brushes.Length - 1)];
-                Brush textBrush = _brushes[segment.SegmentColourIndex == 1 ? 1 : 0];
+                Brush backgroundBrush = _brushes[Math.Min(segment.SegmentBackgroundColourIndex, _brushes.Length - 1)];
+                Brush textBrush = _brushes[segment.SegmentTextColourIndex];
 
                 var segmentFont = font;
                 float segmentWidth = g.MeasureString(segmentText, segmentFont, 0, MeasuringHelper.FormatForMeasuring).Width;
-                if (segment.SegmentColourIndex > 1)
+                if (segment.SegmentBackgroundColourIndex > 1)
                 {
-                    g.FillRoundedRectangle(backgroundBrush, new Rectangle((int)xPos, e.Bounds.Top, (int)segmentWidth, e.Bounds.Height), new Size(9, 9));
+                    g.FillRoundedRectangle(backgroundBrush, new Rectangle((int)xPos, e.Bounds.Top, (int)segmentWidth, e.Bounds.Height), _cornerRadius);
                 }
 
                 g.DrawString(segmentText, segmentFont, textBrush, xPos, e.Bounds.Top + 3, StringFormat.GenericTypographic);
