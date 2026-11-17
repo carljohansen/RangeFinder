@@ -479,6 +479,9 @@ public class FileSearch
             else
             {
                 var newMultiMatchItems = _currentAccumulation.OrderBy(x => x.StartPos).ToList();
+
+                var carltest = MatchingLineDisplayFactory.Create(newMultiMatchItems);
+
                 FileLineTextMultiMatch multiMatch = new(newMultiMatchItems);
                 if (multiMatch.HasOverlaps())
                 {
