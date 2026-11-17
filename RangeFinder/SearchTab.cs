@@ -665,6 +665,10 @@ public partial class SearchTab : UserControl
                         var nonMatchItem = lstTextMatches.Items.Add(new ListViewItem(["", ""]));
                         maxLineNumber = Math.Max(maxLineNumber, e.FileLineDisplay.LineNumber);
                         nonMatchItem.Tag = e.FileLineDisplay;
+                        if (currentlyFillingPostContextWindow)
+                        {
+                            postContextLinesAdded++;
+                        }
                     }
                     lineCount++;
                     if (lineCount >= 500)
@@ -672,7 +676,7 @@ public partial class SearchTab : UserControl
                         e.Cancel = true;
                     }
                     if (currentlyFillingPostContextWindow
-                        && ++postContextLinesAdded == ContextWindowSize)
+                        && postContextLinesAdded == ContextWindowSize)
                     {
                         currentlyFillingPostContextWindow = false;
                     }
