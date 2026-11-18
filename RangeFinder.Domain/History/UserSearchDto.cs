@@ -234,15 +234,13 @@ public class UserSearchDto : IEquatable<UserSearchDto>
 
     private static string Elide(string str, int maxLength)
     {
-        const string ellipsis = "...";
-
         if (str.Length <= maxLength)
         {
             return str;
         }
 
-        var visibleLength = Math.Max(0, maxLength - ellipsis.Length);
-        return str[..visibleLength] + ellipsis;
+        var visibleLength = Math.Max(0, maxLength - 1);
+        return str[..visibleLength] + EliderConstants.Ellipsis;
     }
 
     public bool Equals(UserSearchDto? other)

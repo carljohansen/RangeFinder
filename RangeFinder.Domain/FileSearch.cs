@@ -20,7 +20,6 @@ public class FileSearch
     private readonly IProgress<SearchProgressReportArgs>? _progressCallback = null;
 
     private readonly List<FileLineTextMatch> _currentAccumulation = [];
-    private FileLineTextMatch? _firstMatchOfCurrentAccumulation = null;
     private int _currentAccumulationLineNumber = -1;
 
     public UserSearchDto? SearchCriteria { get; private set; }
@@ -444,7 +443,6 @@ public class FileSearch
 
         var accumulatingMatchAction = CreateAccumulatedMatchFunction(matchAction);
         _currentAccumulationLineNumber = -1;
-        _firstMatchOfCurrentAccumulation = null;
         _currentAccumulation.Clear();
 
         try
@@ -468,16 +466,14 @@ public class FileSearch
         if (atEof
             || singleMatchEvent!.FileLineDisplay.LineNumber != _currentAccumulationLineNumber)
         {
-            if (_currentAccumulation.Count == 0)
+            if (_currentAccumulation.Count == 1)
             {
                 // 99% of the time this is the case
-                if (_firstMatchOfCurrentAccumulation != null)
-                {
-                    var singleMatch = MatchingLineDisplayFactory.Create([_firstMatchOfCurrentAccumulation]); // Eliding happens here.
-                    forwardToAction(new(singleMatch));
-                }
+                var singleMatch = MatchingLineDisplayFactory.Create(_currentAccumulation); // Eliding happens here.
+                forwardToAction(new(singleMatch));
+                _currentAccumulation.Clear();
             }
-            else
+            else if (_currentAccumulation.Count > 1)
             {
                 var newMultiMatchItems = _currentAccumulation.OrderBy(x => x.StartPos).ToList();
 
@@ -505,8 +501,6 @@ public class FileSearch
             {
                 return;
             }
-
-            _firstMatchOfCurrentAccumulation = null; // Start a new line.
         }
 
         if (singleMatchEvent!.FileLineDisplay is not FileLineTextMatch currentEventFileLineTextMatch)
@@ -518,20 +512,6 @@ public class FileSearch
 
         _currentAccumulationLineNumber = singleMatchEvent.FileLineDisplay.LineNumber;
 
-        // TODO: _firstMatchOfCurrentAccumulation has gone from being an improvement to being less efficient.  We need _currentAccumulation for every line, even when there's only one match.
-        // What we are doing now involves creating a new list for every single-match, when we could just be using the one _currentAccumulation list.
-        if (_firstMatchOfCurrentAccumulation == null)
-        {
-            _firstMatchOfCurrentAccumulation = currentEventFileLineTextMatch;
-        }
-        else
-        {
-            // Multi-match!
-            if (_currentAccumulation.Count == 0)
-            {
-                _currentAccumulation.Add(_firstMatchOfCurrentAccumulation);
-            }
-            _currentAccumulation.Add(currentEventFileLineTextMatch);
-        }
+        _currentAccumulation.Add(currentEventFileLineTextMatch);
     }
 }

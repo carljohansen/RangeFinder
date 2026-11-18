@@ -99,9 +99,9 @@ public static class MatchingLineDisplayElider
 
         return elidingAction switch
         {
-            ElidingAction.ElideStart => "..." + s[numCharsToRemove..],
+            ElidingAction.ElideStart => EliderConstants.Ellipsis + s[numCharsToRemove..],
             ElidingAction.ElideMiddle => RemoveFromMiddle(s, numCharsToRemove),
-            ElidingAction.ElideEnd => s[..(s.Length - numCharsToRemove)] + "...",
+            ElidingAction.ElideEnd => s[..(s.Length - numCharsToRemove)] + EliderConstants.Ellipsis,
             _ => s,
         };
     }
@@ -110,7 +110,7 @@ public static class MatchingLineDisplayElider
     {
         var lhsSize = (s.Length - numCharsToRemove) / 2;
         var rhsSize = numCharsToRemove - lhsSize;
-        return s[..lhsSize] + "..." + s[rhsSize..];
+        return s[..lhsSize] + EliderConstants.Ellipsis + s[rhsSize..];
     }
 }
 
