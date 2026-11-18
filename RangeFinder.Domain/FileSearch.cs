@@ -473,28 +473,31 @@ public class FileSearch
                 // 99% of the time this is the case
                 if (_firstMatchOfCurrentAccumulation != null)
                 {
-                    forwardToAction(new(_firstMatchOfCurrentAccumulation)); // TODO: wasteful
+                    var singleMatch = MatchingLineDisplayFactory.Create([_firstMatchOfCurrentAccumulation]); // Eliding happens here.
+                    forwardToAction(new(singleMatch));
                 }
             }
             else
             {
                 var newMultiMatchItems = _currentAccumulation.OrderBy(x => x.StartPos).ToList();
 
-                var carltest = MatchingLineDisplayFactory.Create(newMultiMatchItems);
+                var multiMatch = MatchingLineDisplayFactory.Create(newMultiMatchItems);
 
-                FileLineTextMultiMatch multiMatch = new(newMultiMatchItems);
-                if (multiMatch.HasOverlaps())
-                {
-                    // can't get fancy; will repeatt the line for each match
-                    foreach (var match in newMultiMatchItems)
-                    {
-                        forwardToAction(new(match));
-                    }
-                }
-                else
-                {
-                    forwardToAction(new(multiMatch));
-                }
+                //FileLineTextMultiMatch multiMatch = new(newMultiMatchItems);
+                // TODO: put this back.
+                //if (multiMatch.HasOverlaps())
+                //{
+                //    // can't get fancy; will repeat the line for each match
+                //    foreach (var match in newMultiMatchItems)
+                //    {
+                //        forwardToAction(new(match));
+                //    }
+                //}
+                //else
+                //{
+                //    forwardToAction(new(multiMatch));
+                //}
+                forwardToAction(new(multiMatch));
                 _currentAccumulation.Clear();
             }
 
@@ -515,6 +518,8 @@ public class FileSearch
 
         _currentAccumulationLineNumber = singleMatchEvent.FileLineDisplay.LineNumber;
 
+        // TODO: _firstMatchOfCurrentAccumulation has gone from being an improvement to being less efficient.  We need _currentAccumulation for every line, even when there's only one match.
+        // What we are doing now involves creating a new list for every single-match, when we could just be using the one _currentAccumulation list.
         if (_firstMatchOfCurrentAccumulation == null)
         {
             _firstMatchOfCurrentAccumulation = currentEventFileLineTextMatch;

@@ -4,5 +4,7 @@ public record MatchingLineDisplay(string Line, int LineNumber, MatchSegmentDispl
 {
     public bool HasMatches => true;
 
+    public int Length => Segments.Sum(s => s.SegmentText.Length);
+
     public MatchSegmentDisplay[] GetSegments() => Segments;
 }

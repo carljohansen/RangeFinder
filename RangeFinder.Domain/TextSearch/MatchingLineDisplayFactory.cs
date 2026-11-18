@@ -4,33 +4,44 @@ public static class MatchingLineDisplayFactory
 {
     public static MatchingLineDisplay Create(List<FileLineTextMatch> matchList)
     {
-        if (!matchList.Any())
+        // TODO: return null if unable to create (e.g. because of overlaps).
+
+        if (matchList.Count == 0)
         {
             throw new ArgumentException("The matches collection must contain at least one match.", nameof(matchList));
         }
 
-        var firstMatch = matchList.First();
+        var firstMatch = matchList[0];
         var lineNumber = firstMatch.LineNumber;
         var lineText = firstMatch.Line;
 
-        var unelidedSegments = matchList.Select(m => new MatchSegmentDisplay(lineText.Substring(m.StartPos, m.Length), m.Source.Index)).ToList();
-        var currentPos = 0;
+        var unelidedSegments = matchList.Select(m => new MatchSegmentDisplay(lineText.Substring(m.StartPos, m.Length), m.Source.Index + AtomicTextMatch.MatchHighlightColourIndexBase - 1)).ToList();
         var currentIndex = 0;
+        var currentInsertionPoint = 1;
 
-        // 1. Add the prefix segment
-        // 2. for each item k in matchList, add a segment between [k] and [k+1].  Now [k+1] is [k+2]
-        while (currentPos < lineText.Length)
+        if (matchList[0].StartPos > 0)
         {
-            if (currentPos < matchList[currentIndex].StartPos)
+            var prefixText = lineText[..matchList[0].StartPos];
+            unelidedSegments.Insert(0, new MatchSegmentDisplay(prefixText, 0));
+            currentInsertionPoint++;
+        }
+
+        while (currentIndex < matchList.Count)
+        {
+            var endPosOfCurrentMatch = matchList[currentIndex].StartPos + matchList[currentIndex].Length;
+            var startPosOfNextMatch = matchList.Count > (currentIndex + 1) ? matchList[currentIndex + 1].StartPos : lineText.Length;
+            var interSegmentLength = startPosOfNextMatch - endPosOfCurrentMatch;
+            if (interSegmentLength > 0)
             {
-                var prefixLength = matchList[currentIndex].StartPos - currentPos;
-                var prefixText = lineText.Substring(currentPos, prefixLength);
-                unelidedSegments.Insert(currentIndex, new MatchSegmentDisplay(prefixText, 0));
-                currentPos = matchList[currentIndex].StartPos;
+                var interSegmentText = lineText.Substring(endPosOfCurrentMatch, interSegmentLength);
+                var interSegment = new MatchSegmentDisplay(interSegmentText, 0);
+                unelidedSegments.Insert(currentInsertionPoint++, interSegment);
             }
+            currentInsertionPoint++;
             currentIndex++;
         }
 
-        return new MatchingLineDisplay(lineText, lineNumber, [.. unelidedSegments]);
+        var unelidedResult = new MatchingLineDisplay(lineText, lineNumber, [.. unelidedSegments]);
+        return MatchingLineDisplayElider.Elide(unelidedResult, 200, true);
     }
 }

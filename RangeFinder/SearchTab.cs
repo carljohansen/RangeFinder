@@ -995,6 +995,7 @@ public partial class SearchTab : UserControl
 
     private void cmbRootDir_TextUpdate(object sender, EventArgs e)
     {
+        Debug.WriteLine($"cmbRootDir_TextUpdate: {cmbRootDir.Text}");
         cmbRootDir.BackColor = default;
 
         var currPath = cmbRootDir.Text;
@@ -1023,11 +1024,13 @@ public partial class SearchTab : UserControl
 
     private void cmbRootDir_SelectedIndexChanged(object sender, EventArgs e)
     {
+        Debug.WriteLine($"cmbRootDir_SelectedIndexChanged: {cmbRootDir.Text}");
         MoveComboBoxCaretToEnd(cmbRootDir);
     }
 
     private void cmbRootDir_SelectedValueChanged(object sender, EventArgs e)
     {
+        Debug.WriteLine($"cmbRootDir_SelectedValueChanged: {cmbRootDir.Text}");
         MoveComboBoxCaretToEnd(cmbRootDir);
     }
 

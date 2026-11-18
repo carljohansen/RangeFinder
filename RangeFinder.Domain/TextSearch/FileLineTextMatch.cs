@@ -47,12 +47,12 @@ public record FileLineTextMatch(string Line, int LineNumber, int StartPos, int L
 
         if (contextStringStartPos > numLeadingSpaces)
         {
-            optimizedLine = "…" + optimizedLine;
+            optimizedLine = "..." + optimizedLine;
             optimizedStartPos += 1; // Adjust for the added ellipsis
         }
         if (contextStringEndPos < Line.Length)
         {
-            optimizedLine += "…";
+            optimizedLine += "...";
         }
         return (optimizedLine, optimizedStartPos);
     }
@@ -70,5 +70,9 @@ public record FileLineTextMatch(string Line, int LineNumber, int StartPos, int L
 
 public record MatchSegmentDisplay(string SegmentText, int SegmentBackgroundColourIndex)
 {
+    public bool IsHighlightedMatch = SegmentBackgroundColourIndex > 1;
+
+    public bool IsInterMatchText = SegmentBackgroundColourIndex == 0;
+
     public int SegmentTextColourIndex => SegmentBackgroundColourIndex == 1 ? 1 : 0; // 1 = dark gray, 0 = black
 }
