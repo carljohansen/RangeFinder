@@ -995,7 +995,6 @@ public partial class SearchTab : UserControl
 
     private void cmbRootDir_TextUpdate(object sender, EventArgs e)
     {
-        Debug.WriteLine($"cmbRootDir_TextUpdate: {cmbRootDir.Text}");
         cmbRootDir.BackColor = default;
 
         var currPath = cmbRootDir.Text;

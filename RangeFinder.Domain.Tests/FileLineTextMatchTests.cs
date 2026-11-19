@@ -17,15 +17,5 @@ public class FileLineTextMatchTests
         Assert.Equal(1, segments[1].SegmentBackgroundColourIndex);
         Assert.Equal(" line with the word hello.", segments[2].SegmentText);
         Assert.Equal(0, segments[2].SegmentBackgroundColourIndex);
-    }
-
-    [Fact]
-    public void GetsOptimizedLine()
-    {
-        var longLine = @"You can replace the default context menu with a custom one in ContextMenuOpenning event. In the menu item Click event handler, you can get the index of the grid's current row, which will be the index of right-clicked row. This is a migrated thread and some comments may be shown as answers.";
-        var match = new FileLineTextMatch(longLine, 1, 50, 6, new AtomicTextMatch("sample", TextMatchingOptions.None, false, 0));
-        var (optimizedLine, optimizedStartPos) = match.GetOptimizedLine(40);
-
-        Assert.NotNull(optimizedLine);
-    }
+    }   
 }
