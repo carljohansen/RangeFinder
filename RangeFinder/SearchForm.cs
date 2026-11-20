@@ -471,4 +471,24 @@ public partial class SearchForm : Form
 
         currentTab.SetContextWindow(0);
     }
+
+    private void btnTabHistoryGoBack_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.GoBack();
+    }
+
+    private void btnTabHistoryGoForward_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.GoForward();
+    }
 }

@@ -426,6 +426,26 @@ public partial class SearchTab
         }
     }
 
+    internal void GoBack()
+    {
+        var currSearchCriteria = this.GetCurrentTabState().SearchDto;
+        var undoAttemptResult = _tabSearchHistory.TryPop(currSearchCriteria, out var previousSearchCriteria);
+        if (undoAttemptResult != TabHistoryPopResult.NoData)
+        {
+            ApplyUserSearchDto(previousSearchCriteria!);
+        }
+    }
+
+    internal void GoForward()
+    {
+        var currSearchCriteria = this.GetCurrentTabState().SearchDto;
+        var undoAttemptResult = _tabSearchHistory.TryGoForward(currSearchCriteria, out var nextSearchCriteria);
+        if (undoAttemptResult != TabHistoryPopResult.NoData)
+        {
+            ApplyUserSearchDto(nextSearchCriteria!);
+        }
+    }
+
     private abstract class UseAsCriterionHandlerBase
     {
         protected SearchTab SearchTab;

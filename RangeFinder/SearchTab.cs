@@ -633,23 +633,13 @@ public partial class SearchTab : UserControl
     {
         if (keyData == (Keys.Alt | Keys.Left))
         {
-            var currSearchCriteria = this.GetCurrentTabState().SearchDto;
-            var undoAttemptResult = _tabSearchHistory.TryPop(currSearchCriteria, out var previousSearchCriteria);
-            if (undoAttemptResult != TabHistoryPopResult.NoData)
-            {
-                ApplyUserSearchDto(previousSearchCriteria!);
-            }
+            GoBack();
             return true;
         }
 
         if (keyData == (Keys.Alt | Keys.Right))
         {
-            var currSearchCriteria = this.GetCurrentTabState().SearchDto;
-            var undoAttemptResult = _tabSearchHistory.TryGoForward(currSearchCriteria, out var nextSearchCriteria);
-            if (undoAttemptResult != TabHistoryPopResult.NoData)
-            {
-                ApplyUserSearchDto(nextSearchCriteria!);
-            }
+            GoForward();
             return true;
         }
 

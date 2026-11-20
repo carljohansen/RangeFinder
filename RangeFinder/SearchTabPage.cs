@@ -144,4 +144,14 @@ public class SearchTabPage : TabPage
     public void InitialFocus() => _searchTab.InitialFocus();
 
     internal void ApplyUserPreferences(UserTabSettings userTabSettings) => _searchTab.ApplyUserPreferences(userTabSettings);
+
+    internal void GoBack()
+    {
+        _searchTab.GoBack();
+    }
+
+    internal void GoForward()
+    {
+        _searchTab.GoForward();
+    }
 }

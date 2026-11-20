@@ -50,8 +50,12 @@
             mnuMoreContextLines = new ToolStripMenuItem();
             mnuFewerContextLines = new ToolStripMenuItem();
             mnuResetContextLines = new ToolStripMenuItem();
+            mainToolStrip = new ToolStrip();
+            btnTabHistoryGoBack = new ToolStripButton();
+            btnTabHistoryGoForward = new ToolStripButton();
             mnuTabContext.SuspendLayout();
             menuStrip1.SuspendLayout();
+            mainToolStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tabsMain
@@ -59,11 +63,11 @@
             tabsMain.AllowDrop = true;
             tabsMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabsMain.ContextMenuStrip = mnuTabContext;
-            tabsMain.Location = new Point(0, 26);
+            tabsMain.Location = new Point(0, 51);
             tabsMain.Margin = new Padding(3, 2, 3, 2);
             tabsMain.Name = "tabsMain";
             tabsMain.SelectedIndex = 0;
-            tabsMain.Size = new Size(1159, 495);
+            tabsMain.Size = new Size(1159, 470);
             tabsMain.TabIndex = 0;
             tabsMain.DragDrop += tabsMain_DragDrop;
             tabsMain.DragEnter += tabsMain_DragEnter;
@@ -211,12 +215,43 @@
             mnuResetContextLines.Text = "Reset Context Lines";
             mnuResetContextLines.Click += mnuResetContextLines_Click;
             // 
+            // mainToolStrip
+            // 
+            mainToolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            mainToolStrip.Items.AddRange(new ToolStripItem[] { btnTabHistoryGoBack, btnTabHistoryGoForward });
+            mainToolStrip.Location = new Point(0, 24);
+            mainToolStrip.Name = "mainToolStrip";
+            mainToolStrip.Size = new Size(1159, 25);
+            mainToolStrip.TabIndex = 3;
+            mainToolStrip.Text = "toolStrip1";
+            // 
+            // btnTabHistoryGoBack
+            // 
+            btnTabHistoryGoBack.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnTabHistoryGoBack.Image = (Image)resources.GetObject("btnTabHistoryGoBack.Image");
+            btnTabHistoryGoBack.ImageTransparentColor = Color.Magenta;
+            btnTabHistoryGoBack.Name = "btnTabHistoryGoBack";
+            btnTabHistoryGoBack.Size = new Size(23, 22);
+            btnTabHistoryGoBack.Text = "toolStripButton1";
+            btnTabHistoryGoBack.Click += btnTabHistoryGoBack_Click;
+            // 
+            // btnTabHistoryGoForward
+            // 
+            btnTabHistoryGoForward.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnTabHistoryGoForward.Image = (Image)resources.GetObject("btnTabHistoryGoForward.Image");
+            btnTabHistoryGoForward.ImageTransparentColor = Color.Magenta;
+            btnTabHistoryGoForward.Name = "btnTabHistoryGoForward";
+            btnTabHistoryGoForward.Size = new Size(23, 22);
+            btnTabHistoryGoForward.Text = "toolStripButton2";
+            btnTabHistoryGoForward.Click += btnTabHistoryGoForward_Click;
+            // 
             // SearchForm
             // 
             AllowDrop = true;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1159, 521);
+            Controls.Add(mainToolStrip);
             Controls.Add(menuStrip1);
             Controls.Add(tabsMain);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -232,6 +267,8 @@
             mnuTabContext.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            mainToolStrip.ResumeLayout(false);
+            mainToolStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -258,5 +295,8 @@
         private ToolStripMenuItem mnuMoreContextLines;
         private ToolStripMenuItem mnuFewerContextLines;
         private ToolStripMenuItem mnuResetContextLines;
+        private ToolStrip mainToolStrip;
+        private ToolStripButton btnTabHistoryGoBack;
+        private ToolStripButton btnTabHistoryGoForward;
     }
 }
