@@ -1,3 +1,4 @@
+using RangeFinder.Domain.Utilities;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,6 +21,20 @@ public static class UserSearchRepository
         IgnoreReadOnlyProperties = true
     };
 
+    public static readonly JsonSerializerOptions SerializationOptionsIncludeReadOnlyProps = new()
+    {
+        WriteIndented = false,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        IgnoreReadOnlyProperties = false
+    };
+
+    static UserSearchRepository()
+    {
+        var converterFactory = new JsonConverterFactoryForStackOfT();
+        SerializationOptions.Converters.Add(converterFactory);
+        SerializationOptionsIncludeReadOnlyProps.Converters.Add(converterFactory);
+    }
+
     public static string GetStorageDirectory()
     {
         // Get the LocalApplicationData folder path
@@ -38,23 +53,23 @@ public static class UserSearchRepository
         return path;
     }
 
-    public static void SaveSearchDto(UserSearchDto dto, string name)
-    {
-        var fileName = GetDtoFileName(name);
+    //public static void SaveSearchDto(UserSearchDto dto, string name)
+    //{
+    //    var fileName = GetDtoFileName(name);
 
 
-        string jsonString = JsonSerializer.Serialize(dto, SerializationOptions);
+    //    string jsonString = JsonSerializer.Serialize(dto, SerializationOptions);
 
-        // Save JSON to file
-        File.WriteAllText(fileName, jsonString);
-    }
+    //    // Save JSON to file
+    //    File.WriteAllText(fileName, jsonString);
+    //}
 
     private static string GetFileName(int id) => $"tab_{id:000}";
 
-    public static void SaveSearchDto(UserSearchDto dto)
-    {
-        SaveSearchDto(dto, GetFileName(dto.Id));
-    }
+    //public static void SaveSearchDto(UserSearchDto dto)
+    //{
+    //    SaveSearchDto(dto, GetFileName(dto.Id));
+    //}
 
     public static void DeleteSearchDto(int index)
     {
@@ -65,21 +80,21 @@ public static class UserSearchRepository
         }
     }
 
-    public static UserSearchDto[] LoadSavedSearches()
-    {
-        var storageDir = GetStorageDirectory();
-        var searchFiles = Directory.GetFiles(storageDir, "tab_*.json");
-        var savedSearches = new List<UserSearchDto>();
-        foreach (var fileName in searchFiles.OrderBy(f => f))
-        {
-            var dto = GetSearchDto(fileName);
-            if (dto != null)
-            {
-                savedSearches.Add(dto);
-            }
-        }
-        return [.. savedSearches];
-    }
+    //public static UserSearchDto[] LoadSavedSearches()
+    //{
+    //    var storageDir = GetStorageDirectory();
+    //    var searchFiles = Directory.GetFiles(storageDir, "tab_*.json");
+    //    var savedSearches = new List<UserSearchDto>();
+    //    foreach (var fileName in searchFiles.OrderBy(f => f))
+    //    {
+    //        var dto = GetSearchDto(fileName);
+    //        if (dto != null)
+    //        {
+    //            savedSearches.Add(dto);
+    //        }
+    //    }
+    //    return [.. savedSearches];
+    //}
 
     private static UserSearchDto? GetSearchDto(string name)
     {

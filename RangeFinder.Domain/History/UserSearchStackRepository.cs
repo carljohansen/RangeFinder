@@ -8,13 +8,18 @@ public static class UserSearchStackRepository
     {
         var fileName = UserSearchRepository.GetDtoFileName(name);
 
-        string jsonString = JsonSerializer.Serialize(dto, UserSearchRepository.SerializationOptions);
+        string jsonString = JsonSerializer.Serialize(dto, UserSearchRepository.SerializationOptionsIncludeReadOnlyProps);
 
         // Save JSON to file
         File.WriteAllText(fileName, jsonString);
     }
 
-    private static string GetFileName(int id) => $"tabstack_{id:000}";
+    public static void SaveSearchStack(TabSearchHistory dto)
+    {
+        SaveSearchStack(dto, GetFileName(dto.Id));
+    }
+
+    private static string GetFileName(int id) => $"tab_{id:000}";
 
     public static void DeleteSearchStack(int index)
     {
@@ -28,7 +33,7 @@ public static class UserSearchStackRepository
     public static TabSearchHistory[] LoadSavedSearches()
     {
         var storageDir = UserSearchRepository.GetStorageDirectory();
-        var searchFiles = Directory.GetFiles(storageDir, "tabstack_*.json");
+        var searchFiles = Directory.GetFiles(storageDir, "tab_*.json");
         var savedSearches = new List<TabSearchHistory>();
         foreach (var fileName in searchFiles.OrderBy(f => f))
         {
@@ -51,7 +56,7 @@ public static class UserSearchStackRepository
 
         var json = File.ReadAllText(fileName);
 
-        var result = JsonSerializer.Deserialize<TabSearchHistory>(json, UserSearchRepository.SerializationOptions);
+        var result = JsonSerializer.Deserialize<TabSearchHistory>(json, UserSearchRepository.SerializationOptionsIncludeReadOnlyProps);
         return result;
     }
 }

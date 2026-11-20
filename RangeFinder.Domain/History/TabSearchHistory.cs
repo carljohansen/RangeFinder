@@ -32,6 +32,8 @@ public class TabSearchHistory
 
     public UserSearchDto GetCurrent() => Peek() ?? UserSearchDto.CreateDefault();
 
+    public int Id => GetCurrent().Id;
+
     public void SetId(int id)
     {
         if (History.Count != 1)

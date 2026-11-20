@@ -145,10 +145,8 @@ public partial class SearchTab : UserControl
             _searchCancellationTokenSource = null;
         }
 
-        UserSearchRepository.SaveSearchDto(searchDto);
-
         _tabSearchHistory.Push(searchDto);
-        UserSearchStackRepository.SaveSearchStack(_tabSearchHistory, "carltest" + searchDto.Id);
+        UserSearchStackRepository.SaveSearchStack(_tabSearchHistory);
 
         TextCriterionHistoryCollection.Instance.BaseDirHistory.AddItem(searchDto.BaseDirectoriesPattern);
         TextCriterionHistoryCollection.Instance.InclusionsHistory.AddItem(searchDto.RawIncludeFilesPattern);

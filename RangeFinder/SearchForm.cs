@@ -131,7 +131,7 @@ public partial class SearchForm : Form
         TextFileDetectorRepository.EnsureUserCopyOfTextFileTypesExists();
         TextFileDetectorRepository.Populate(TextFileDetector.Instance);
 
-        var savedTabs = UserSearchRepository.LoadSavedSearches();
+        var savedTabs = UserSearchStackRepository.LoadSavedSearches();
         var savedPrefs = TabSettingsRepository.LoadSavedTabSettings();
         if (savedTabs.Length > 0)
         {
@@ -148,7 +148,7 @@ public partial class SearchForm : Form
         }
     }
 
-    private void RestoreSavedTabs(UserSearchDto[] savedTabs,
+    private void RestoreSavedTabs(TabSearchHistory[] savedTabs,
                                   UserTabSettings[] savedPrefs)
     {
         tabsMain.Visible = false;
@@ -156,7 +156,7 @@ public partial class SearchForm : Form
         foreach (var savedTab in savedTabs)
         {
             var tabPrefs = savedPrefs.FirstOrDefault(p => p.Id == savedTab.Id) ?? UserTabSettings.CreateDefault();
-            _ = AddNewTab(UserTabState.Create(savedTab, tabPrefs));
+            _ = AddNewTab(new UserTabState(savedTab, tabPrefs));
         }
 
         if (Properties.Settings.Default.LastTabIndex < 0
