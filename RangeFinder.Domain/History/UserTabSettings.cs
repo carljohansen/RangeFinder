@@ -14,6 +14,8 @@ public class UserTabSettings
 
     public TextFilePreviewMode TextFilePreviewMode { get; set; }
 
+    public byte ContextWindowSize { get; set; }
+
     public static UserTabSettings CreateDefault() => new()
     {
         Id = 0,

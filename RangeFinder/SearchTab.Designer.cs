@@ -98,7 +98,8 @@ namespace RangeFinder
             btnShowFullPreview = new Button();
             btnHidePreview = new Button();
             mainToolTip = new ToolTip(components);
-            searchStatsToolTip = new ToolTip(components);
+            pnlSearchStats = new Panel();
+            txtSearchStats = new TextBox();
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -107,6 +108,7 @@ namespace RangeFinder
             ((System.ComponentModel.ISupportInitialize)grdResult).BeginInit();
             mnuTextMatchContext.SuspendLayout();
             statusStrip1.SuspendLayout();
+            pnlSearchStats.SuspendLayout();
             SuspendLayout();
             //
             // btnSearch
@@ -407,7 +409,6 @@ namespace RangeFinder
             grdResult.ColumnHeaderMouseClick += grdResult_ColumnHeaderMouseClick;
             grdResult.ColumnWidthChanged += grdResult_ColumnWidthChanged;
             grdResult.SelectionChanged += grdResult_SelectionChanged;
-            grdResult.Sorted += grdResult_Sorted;
             grdResult.MouseEnter += grdResult_MouseEnter;
             grdResult.MouseLeave += grdResult_MouseLeave;
             //
@@ -644,7 +645,7 @@ namespace RangeFinder
             // lblStatusStripSpring
             //
             lblStatusStripSpring.Name = "lblStatusStripSpring";
-            lblStatusStripSpring.Size = new Size(713, 17);
+            lblStatusStripSpring.Size = new Size(869, 17);
             lblStatusStripSpring.Spring = true;
             //
             // lblFilesFound
@@ -654,6 +655,7 @@ namespace RangeFinder
             lblFilesFound.Name = "lblFilesFound";
             lblFilesFound.Size = new Size(4, 17);
             lblFilesFound.Visible = false;
+            lblFilesFound.Click += lblFilesFound_Click;
             //
             // lblElapsedTime
             //
@@ -713,10 +715,32 @@ namespace RangeFinder
             btnHidePreview.UseVisualStyleBackColor = true;
             btnHidePreview.Click += btnHidePreview_Click;
             //
+            // pnlSearchStats
+            //
+            pnlSearchStats.BorderStyle = BorderStyle.Fixed3D;
+            pnlSearchStats.Controls.Add(txtSearchStats);
+            pnlSearchStats.Location = new Point(848, 55);
+            pnlSearchStats.Name = "pnlSearchStats";
+            pnlSearchStats.Size = new Size(30, 24);
+            pnlSearchStats.TabIndex = 106;
+            pnlSearchStats.Visible = false;
+            //
+            // txtSearchStats
+            //
+            txtSearchStats.BackColor = Color.LightGoldenrodYellow;
+            txtSearchStats.Dock = DockStyle.Fill;
+            txtSearchStats.Location = new Point(0, 0);
+            txtSearchStats.Multiline = true;
+            txtSearchStats.Name = "txtSearchStats";
+            txtSearchStats.ReadOnly = true;
+            txtSearchStats.Size = new Size(26, 20);
+            txtSearchStats.TabIndex = 0;
+            //
             // SearchTab
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(pnlSearchStats);
             Controls.Add(btnHidePreview);
             Controls.Add(btnShowFullPreview);
             Controls.Add(btnShowMatchPreview);
@@ -755,6 +779,8 @@ namespace RangeFinder
             mnuTextMatchContext.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            pnlSearchStats.ResumeLayout(false);
+            pnlSearchStats.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -826,6 +852,7 @@ namespace RangeFinder
         private ToolStripMenuItem mnuAlwaysEvaluateFile;
         private ToolStripSeparator toolStripSeparator4;
         private TextBox txtLineGrab;
-        private ToolTip searchStatsToolTip;
+        private Panel pnlSearchStats;
+        private TextBox txtSearchStats;
     }
 }

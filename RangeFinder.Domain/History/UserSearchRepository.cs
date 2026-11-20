@@ -1,4 +1,3 @@
-using RangeFinder.Domain.TextSearch;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -82,7 +81,7 @@ public static class UserSearchRepository
         return [.. savedSearches];
     }
 
-    public static UserSearchDto? GetSearchDto(string name)
+    private static UserSearchDto? GetSearchDto(string name)
     {
         var fileName = GetDtoFileName(name);
         if (!File.Exists(fileName))
@@ -94,21 +93,6 @@ public static class UserSearchRepository
 
         var result = JsonSerializer.Deserialize<UserSearchDto>(json, SerializationOptions);
         return result;
-    }
-
-    public static UserSearchDto? GetLastSearchDto() => GetSearchDto("last");
-
-    public static UserSearchDto GetDefaultSearchDto()
-    {
-        return new()
-        {
-            TextSearchPattern = "",
-            RawIncludeFilesPattern = "",
-            RawExcludeFilesPattern = "",
-            BaseDirectoriesPattern = Directory.GetCurrentDirectory(),
-            FilterByModifiedDate = false,
-            TextMatchingOptions = TextMatchingOptions.None
-        };
     }
 
     public static void DeleteHistoryFiles()

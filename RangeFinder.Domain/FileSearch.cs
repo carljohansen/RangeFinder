@@ -22,6 +22,8 @@ public class FileSearch
     private readonly List<FileLineTextMatch> _currentAccumulation = [];
     private int _currentAccumulationLineNumber = -1;
 
+    private int? _rawFileCount = null;
+
     public UserSearchDto? SearchCriteria { get; private set; }
 
     public FileSearch(DataTable dataTable, int locationDisplayLength, IProgress<SearchProgressReportArgs>? progressCallback)
@@ -193,6 +195,15 @@ public class FileSearch
         catch (TaskCanceledException)
         {
             wasCancelled = true;
+            if (_rawFileCount.HasValue)
+            {
+                _progressCallback?.Report(new SearchProgressReportArgs
+                {
+                    StatusMessage = "Cancelled",
+                    SearchCompletionStats = new(_rawFileCount.Value),
+                    ProgressPercentage = 0
+                });
+            }
         }
         catch (UnauthorizedAccessException)
         {
@@ -259,6 +270,8 @@ public class FileSearch
             yield break;
         }
 
+        _rawFileCount = rawFiles.Files.Count();
+
         await foreach (var match in ProcessFiles(baseDirectory, rawFiles.Files, textChecks, includePatterns.Paths.Count > 0, cancellationToken))
         {
             yield return match;
@@ -267,7 +280,7 @@ public class FileSearch
         _progressCallback?.Report(new SearchProgressReportArgs
         {
             StatusMessage = "Finished",
-            NumFilesBeforeTextMatch = rawFiles.Files.Count(),
+            SearchCompletionStats = new(_rawFileCount.Value),
             ProgressPercentage = 100
         });
     }

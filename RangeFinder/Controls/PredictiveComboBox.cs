@@ -57,10 +57,11 @@ public class PredictiveComboBox : ComboBox
             }
         }
 
-        //if (Items.Count > 0)
-        //{
-        //    DroppedDown = true;
-        //}
+        if (Items.Count > 0)
+        {
+            DroppedDown = true;
+            Text = currText;
+        }
 
         SelectionLength = 0;
         SelectionStart = Math.Min(caretPos, Text.Length);
