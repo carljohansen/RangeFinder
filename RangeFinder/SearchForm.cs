@@ -44,8 +44,8 @@ public partial class SearchForm : Form
     {
         if (initialState.Id == 0)
         {
-            initialState.SearchDto.Id = _nextTabId++;
-            initialState.TabSettings.Id = initialState.SearchDto.Id;
+            initialState.TabSearchHistory.SetId(_nextTabId++);
+            initialState.TabSettings.Id = initialState.Id;
         }
         else
         {
@@ -186,7 +186,8 @@ public partial class SearchForm : Form
             var tabSearchSettings = tabToDuplicate?.GetCurrentSearchSettings();
             if (tabSearchSettings != null)
             {
-                tabSearchSettings.SearchDto.Id = 0; // Reset ID for the new tab
+                // TODO: setId on all of them?  I guess so.
+                tabSearchSettings.TabSearchHistory.SetId(0); // Reset ID for the new tab
                 AddNewTab(tabSearchSettings);
             }
         }
@@ -356,7 +357,7 @@ public partial class SearchForm : Form
             BaseDirectoriesPattern = tempDir
         };
 
-        var zipExploreState = new UserTabState(zipExploreUserSearchDto, UserTabSettings.CreateDefault());
+        var zipExploreState = UserTabState.Create(zipExploreUserSearchDto, UserTabSettings.CreateDefault());
         AddNewTab(zipExploreState, Color.Lavender);
     }
 

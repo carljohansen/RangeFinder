@@ -26,15 +26,17 @@ public class UserTabSettings
     };
 }
 
-public record UserTabState(UserSearchDto SearchDto, UserTabSettings TabSettings)
+public record UserTabState(TabSearchHistory TabSearchHistory, UserTabSettings TabSettings)
 {
+    public UserSearchDto SearchDto => TabSearchHistory.GetCurrent();
+
     public int Id => SearchDto.Id;
 
-    public static UserTabState CreateDefault() => new(UserSearchDto.CreateDefault(), UserTabSettings.CreateDefault());
+    public static UserTabState CreateDefault() => new(TabSearchHistory.CreateDefault(), UserTabSettings.CreateDefault());
 
     public static UserTabState Create(UserSearchDto searchDto, UserTabSettings tabSettings)
     {
-        var result = new UserTabState(searchDto, tabSettings);
+        var result = new UserTabState(TabSearchHistory.Create(searchDto), tabSettings);
         if (tabSettings.Id != searchDto.Id)
         {
             tabSettings.Id = searchDto.Id;

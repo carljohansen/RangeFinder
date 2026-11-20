@@ -28,7 +28,19 @@ public class TabSearchHistory
         return history;
     }
 
+    public static TabSearchHistory CreateDefault() => Create(UserSearchDto.CreateDefault());
+
     public UserSearchDto GetCurrent() => Peek() ?? UserSearchDto.CreateDefault();
+
+    public void SetId(int id)
+    {
+        if (History.Count != 1)
+        {
+            throw new InvalidOperationException("Cannot set Id when history has more than one entry.");
+        }
+
+        GetCurrent().Id = id;
+    }
 
     public UserSearchDto? Peek()
     {

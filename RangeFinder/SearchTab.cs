@@ -49,10 +49,7 @@ public partial class SearchTab : UserControl
     private int? _lineGrabHighlightIndex = null;
 
     private SearchForm _parent;
-
-
-
-    private readonly TabSearchHistory _carltestSearchHistory;
+    private readonly TabSearchHistory _tabSearchHistory;
 
     public SearchTab(UserTabState initialState)
     {
@@ -72,8 +69,7 @@ public partial class SearchTab : UserControl
         grdResult.AutoGenerateColumns = false;
         grdResult.DataSource = searchResultDataSource;
 
-        _carltestSearchHistory = TabSearchHistory.Create(initialState.SearchDto);
-
+        _tabSearchHistory = initialState.TabSearchHistory;
         ApplyUserSearchDto(initialState.SearchDto);
     }
 
@@ -151,8 +147,8 @@ public partial class SearchTab : UserControl
 
         UserSearchRepository.SaveSearchDto(searchDto);
 
-        _carltestSearchHistory.Push(searchDto);
-        UserSearchStackRepository.SaveSearchStack(_carltestSearchHistory, "carltest" + searchDto.Id);
+        _tabSearchHistory.Push(searchDto);
+        UserSearchStackRepository.SaveSearchStack(_tabSearchHistory, "carltest" + searchDto.Id);
 
         TextCriterionHistoryCollection.Instance.BaseDirHistory.AddItem(searchDto.BaseDirectoriesPattern);
         TextCriterionHistoryCollection.Instance.InclusionsHistory.AddItem(searchDto.RawIncludeFilesPattern);
@@ -638,7 +634,7 @@ public partial class SearchTab : UserControl
         if (keyData == (Keys.Alt | Keys.Left))
         {
             var currSearchCriteria = this.GetCurrentTabState().SearchDto;
-            var undoAttemptResult = _carltestSearchHistory.TryPop(currSearchCriteria, out var previousSearchCriteria);
+            var undoAttemptResult = _tabSearchHistory.TryPop(currSearchCriteria, out var previousSearchCriteria);
             if (undoAttemptResult != TabHistoryPopResult.NoData)
             {
                 ApplyUserSearchDto(previousSearchCriteria!);
@@ -649,7 +645,7 @@ public partial class SearchTab : UserControl
         if (keyData == (Keys.Alt | Keys.Right))
         {
             var currSearchCriteria = this.GetCurrentTabState().SearchDto;
-            var undoAttemptResult = _carltestSearchHistory.TryGoForward(currSearchCriteria, out var nextSearchCriteria);
+            var undoAttemptResult = _tabSearchHistory.TryGoForward(currSearchCriteria, out var nextSearchCriteria);
             if (undoAttemptResult != TabHistoryPopResult.NoData)
             {
                 ApplyUserSearchDto(nextSearchCriteria!);
