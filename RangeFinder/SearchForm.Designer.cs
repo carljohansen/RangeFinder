@@ -227,12 +227,14 @@
             // 
             // btnTabHistoryGoBack
             // 
+            btnTabHistoryGoBack.BackgroundImageLayout = ImageLayout.None;
             btnTabHistoryGoBack.DisplayStyle = ToolStripItemDisplayStyle.Image;
             btnTabHistoryGoBack.Image = (Image)resources.GetObject("btnTabHistoryGoBack.Image");
             btnTabHistoryGoBack.ImageTransparentColor = Color.Magenta;
             btnTabHistoryGoBack.Name = "btnTabHistoryGoBack";
             btnTabHistoryGoBack.Size = new Size(23, 22);
             btnTabHistoryGoBack.Text = "toolStripButton1";
+            btnTabHistoryGoBack.ToolTipText = "Previous Criteria";
             btnTabHistoryGoBack.Click += btnTabHistoryGoBack_Click;
             // 
             // btnTabHistoryGoForward
@@ -243,6 +245,7 @@
             btnTabHistoryGoForward.Name = "btnTabHistoryGoForward";
             btnTabHistoryGoForward.Size = new Size(23, 22);
             btnTabHistoryGoForward.Text = "toolStripButton2";
+            btnTabHistoryGoForward.ToolTipText = "Next Criteria";
             btnTabHistoryGoForward.Click += btnTabHistoryGoForward_Click;
             // 
             // SearchForm
