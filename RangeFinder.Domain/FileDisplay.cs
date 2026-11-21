@@ -1,6 +1,5 @@
 ﻿using RangeFinder.Domain.TextFileDetection;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace RangeFinder.Domain;
@@ -67,7 +66,7 @@ public class FileDisplay
             FullPath = matchingDirFullPath,
             Attributes = FileAttributes.Directory,
             FileTypeDescription = folderMetadata.FriendlyDocName,
-            Location = new FileLocation(Path.GetDirectoryName(matchingDirFullPath)!, 50, baseDirectory),
+            Location = locationRepo.Get(matchingDirFullPath),
             Icon = folderMetadata.Icon
         };
 
