@@ -30,6 +30,13 @@ public static class UserSearchStackRepository
         }
     }
 
+    public static TabSearchHistory CloneTabSearchHistory(TabSearchHistory original)
+    {
+        var jsonString = JsonSerializer.Serialize(original, UserSearchRepository.SerializationOptionsIncludeReadOnlyProps);
+        var clone = JsonSerializer.Deserialize<TabSearchHistory>(jsonString, UserSearchRepository.SerializationOptionsIncludeReadOnlyProps) ?? throw new InvalidOperationException("Failed to clone TabSearchHistory.");
+        return clone;
+    }
+
     public static TabSearchHistory[] LoadSavedSearches()
     {
         var storageDir = UserSearchRepository.GetStorageDirectory();

@@ -183,7 +183,7 @@ public partial class SearchForm : Form
     {
         if (tabsMain.TabPages[index] is SearchTabPage tabToDuplicate)
         {
-            var tabSearchSettings = tabToDuplicate?.GetCurrentSearchSettings();
+            var tabSearchSettings = tabToDuplicate?.GetCurrentSearchSettingsWithHistory();
             if (tabSearchSettings != null)
             {
                 // TODO: setId on all of them?  I guess so.

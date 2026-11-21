@@ -44,4 +44,23 @@ public record UserTabState(TabSearchHistory TabSearchHistory, UserTabSettings Ta
 
         return result;
     }
+
+    private static UserTabState Create(TabSearchHistory tabSearchHistory, UserTabSettings tabSettings)
+    {
+        var result = new UserTabState(tabSearchHistory, tabSettings);
+        if (tabSettings.Id != tabSearchHistory.Id)
+        {
+            tabSettings.Id = tabSearchHistory.Id;
+        }
+
+        return result;
+    }
+
+    public static UserTabState Create(TabSearchHistory tabSearchHistory, UserSearchDto currentUnappliedSearch, UserTabSettings userTabSettings)
+    {
+        var historyClone = UserSearchStackRepository.CloneTabSearchHistory(tabSearchHistory);
+        historyClone.Push(currentUnappliedSearch);
+
+        return Create(historyClone, userTabSettings);
+    }
 }

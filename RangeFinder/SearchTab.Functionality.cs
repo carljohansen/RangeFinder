@@ -63,7 +63,7 @@ public partial class SearchTab
         cmbContainingText.Items.Clear();
     }
 
-    public UserTabState GetCurrentTabState()
+    public UserTabState GetCurrentTabState(bool includeHistory = false)
     {
         var searchPatterns = cmbFilePattern.Text.Trim();
         var exceptSearchPatterns = cmbExceptFilePattern.Text.Trim();
@@ -101,7 +101,15 @@ public partial class SearchTab
             ModifiedInLastQuantityType = cmbDateFilterAmountType.SelectedItem?.ToString(),
         };
 
-        return UserTabState.Create(searchDto, GetCurrentUserSettings());
+        if (includeHistory)
+        {
+
+            return UserTabState.Create(_tabSearchHistory, searchDto, GetCurrentUserSettings());
+        }
+        else
+        {
+            return UserTabState.Create(searchDto, GetCurrentUserSettings());
+        }
     }
 
     public UserTabSettings GetCurrentUserSettings()

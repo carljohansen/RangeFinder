@@ -4,6 +4,8 @@ namespace RangeFinder.Domain.History;
 
 public class TabSearchHistory
 {
+    public int Id { get; private set; }
+
     public Stack<UserSearchDto> History { get; }
 
     public Stack<UserSearchDto> ForwardHistory { get; }
@@ -15,10 +17,11 @@ public class TabSearchHistory
     }
 
     [JsonConstructor]
-    public TabSearchHistory(Stack<UserSearchDto> history, Stack<UserSearchDto> forwardHistory)
+    public TabSearchHistory(Stack<UserSearchDto> history, Stack<UserSearchDto> forwardHistory, int id)
     {
         History = history;
         ForwardHistory = forwardHistory;
+        this.Id = id;
     }
 
     public static TabSearchHistory Create(UserSearchDto initialSearch)
@@ -28,20 +31,22 @@ public class TabSearchHistory
         return history;
     }
 
-    public static TabSearchHistory CreateDefault() => Create(UserSearchDto.CreateDefault());
+    public static TabSearchHistory CreateDefault() => new();
 
     public UserSearchDto GetCurrent() => Peek() ?? UserSearchDto.CreateDefault();
 
-    public int Id => GetCurrent().Id;
-
     public void SetId(int id)
     {
-        if (History.Count != 1)
+        Id = id;
+        foreach (var search in History)
         {
-            throw new InvalidOperationException("Cannot set Id when history has more than one entry.");
+            search.Id = id;
         }
 
-        GetCurrent().Id = id;
+        foreach (var search in ForwardHistory)
+        {
+            search.Id = id;
+        }
     }
 
     public UserSearchDto? Peek()

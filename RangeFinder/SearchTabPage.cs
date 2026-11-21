@@ -122,7 +122,9 @@ public class SearchTabPage : TabPage
         _searchTab.ContextWindowSize = size;
     }
 
-    public UserTabState GetCurrentSearchSettings() => _searchTab.GetCurrentTabState();
+    public UserTabState GetCurrentSearchSettings() => _searchTab.GetCurrentTabState(includeHistory: false);
+
+    public UserTabState GetCurrentSearchSettingsWithHistory() => _searchTab.GetCurrentTabState(includeHistory: true);
 
     public void ClearHistory() => _searchTab.ClearHistory();
 
