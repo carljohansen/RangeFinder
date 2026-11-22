@@ -53,6 +53,11 @@
             mainToolStrip = new ToolStrip();
             btnTabHistoryGoBack = new ToolStripButton();
             btnTabHistoryGoForward = new ToolStripButton();
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripDropDownButton1 = new ToolStripDropDownButton();
+            mnuShowMatchingTextPreview = new ToolStripMenuItem();
+            mnuShowFullTextPreview = new ToolStripMenuItem();
+            mnuHidePreviewPane = new ToolStripMenuItem();
             mnuTabContext.SuspendLayout();
             menuStrip1.SuspendLayout();
             mainToolStrip.SuspendLayout();
@@ -69,6 +74,7 @@
             tabsMain.SelectedIndex = 0;
             tabsMain.Size = new Size(1159, 470);
             tabsMain.TabIndex = 0;
+            tabsMain.SelectedIndexChanged += tabsMain_SelectedIndexChanged;
             tabsMain.DragDrop += tabsMain_DragDrop;
             tabsMain.DragEnter += tabsMain_DragEnter;
             tabsMain.DragLeave += tabsMain_DragLeave;
@@ -218,7 +224,7 @@
             // mainToolStrip
             // 
             mainToolStrip.GripStyle = ToolStripGripStyle.Hidden;
-            mainToolStrip.Items.AddRange(new ToolStripItem[] { btnTabHistoryGoBack, btnTabHistoryGoForward });
+            mainToolStrip.Items.AddRange(new ToolStripItem[] { btnTabHistoryGoBack, btnTabHistoryGoForward, toolStripSeparator3, toolStripDropDownButton1 });
             mainToolStrip.Location = new Point(0, 24);
             mainToolStrip.Name = "mainToolStrip";
             mainToolStrip.Size = new Size(1159, 25);
@@ -247,6 +253,44 @@
             btnTabHistoryGoForward.Text = "toolStripButton2";
             btnTabHistoryGoForward.ToolTipText = "Next Criteria";
             btnTabHistoryGoForward.Click += btnTabHistoryGoForward_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 25);
+            // 
+            // toolStripDropDownButton1
+            // 
+            toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { mnuShowMatchingTextPreview, mnuShowFullTextPreview, mnuHidePreviewPane });
+            toolStripDropDownButton1.Image = (Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new Size(29, 22);
+            // 
+            // mnuShowMatchingTextPreview
+            // 
+            mnuShowMatchingTextPreview.Name = "mnuShowMatchingTextPreview";
+            mnuShowMatchingTextPreview.ShortcutKeys = Keys.Control | Keys.D1;
+            mnuShowMatchingTextPreview.Size = new Size(265, 22);
+            mnuShowMatchingTextPreview.Text = "Show Matching Text Preview";
+            mnuShowMatchingTextPreview.Click += mnuShowMatchingTextPreview_Click;
+            // 
+            // mnuShowFullTextPreview
+            // 
+            mnuShowFullTextPreview.Name = "mnuShowFullTextPreview";
+            mnuShowFullTextPreview.ShortcutKeys = Keys.Control | Keys.D2;
+            mnuShowFullTextPreview.Size = new Size(265, 22);
+            mnuShowFullTextPreview.Text = "Show Full Text Preview";
+            mnuShowFullTextPreview.Click += mnuShowFullTextPreview_Click;
+            // 
+            // mnuHidePreviewPane
+            // 
+            mnuHidePreviewPane.Name = "mnuHidePreviewPane";
+            mnuHidePreviewPane.ShortcutKeys = Keys.Control | Keys.D3;
+            mnuHidePreviewPane.Size = new Size(265, 22);
+            mnuHidePreviewPane.Text = "Hide Preview Pane";
+            mnuHidePreviewPane.Click += mnuHidePreviewPane_Click;
             // 
             // SearchForm
             // 
@@ -301,5 +345,10 @@
         private ToolStrip mainToolStrip;
         private ToolStripButton btnTabHistoryGoBack;
         private ToolStripButton btnTabHistoryGoForward;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripDropDownButton toolStripDropDownButton1;
+        private ToolStripMenuItem mnuShowMatchingTextPreview;
+        private ToolStripMenuItem mnuShowFullTextPreview;
+        private ToolStripMenuItem mnuHidePreviewPane;
     }
 }

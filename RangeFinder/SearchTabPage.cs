@@ -1,6 +1,7 @@
 ﻿using RangeFinder;
 using RangeFinder.Domain;
 using RangeFinder.Domain.History;
+using RangeFinder.Domain.TextSearch;
 
 public class SearchTabPage : TabPage
 {
@@ -46,6 +47,13 @@ public class SearchTabPage : TabPage
     }
 
     public UserTabSettings GetCurrentUserSettings() => _searchTab.GetCurrentUserSettings();
+
+    public TextFilePreviewMode CurrentTextFilePreviewMode => _searchTab.CurrentTextFilePreviewMode;
+
+    public void SetPreviewMode(TextFilePreviewMode mode)
+    {
+        _searchTab.SetPreviewMode(mode);
+    }
 
     private int? _lastFileCountShown;
 

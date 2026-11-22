@@ -1,6 +1,7 @@
 ﻿using RangeFinder.Domain;
 using RangeFinder.Domain.History;
 using RangeFinder.Domain.TextFileDetection;
+using RangeFinder.Domain.TextSearch;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -59,6 +60,7 @@ public partial class SearchForm : Form
         newTab.ApplyUserPreferences(initialState.TabSettings);
         tabsMain.SelectedTab = newTab;
         newTab.InitialFocus();
+        UpdatePreviewModeControls();
 
         return newTab;
     }
@@ -490,5 +492,55 @@ public partial class SearchForm : Form
         }
 
         currentTab.GoForward();
+    }
+
+    private void UpdatePreviewModeControls()
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+        var currentMode = currentTab.CurrentTextFilePreviewMode;
+        mnuShowFullTextPreview.Checked = currentMode == TextFilePreviewMode.FullPreview;
+        mnuShowMatchingTextPreview.Checked = currentMode == TextFilePreviewMode.MatchPreview;
+        mnuHidePreviewPane.Checked = currentMode == TextFilePreviewMode.None;
+    }
+
+    private void tabsMain_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        UpdatePreviewModeControls();
+    }
+
+    private void mnuShowMatchingTextPreview_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.SetPreviewMode(TextFilePreviewMode.MatchPreview);
+        UpdatePreviewModeControls();
+    }
+
+    private void mnuShowFullTextPreview_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.SetPreviewMode(TextFilePreviewMode.FullPreview);
+        UpdatePreviewModeControls();
+    }
+
+    private void mnuHidePreviewPane_Click(object sender, EventArgs e)
+    {
+        if (tabsMain.SelectedTab is not SearchTabPage currentTab)
+        {
+            return;
+        }
+
+        currentTab.SetPreviewMode(TextFilePreviewMode.None);
+        UpdatePreviewModeControls();
     }
 }

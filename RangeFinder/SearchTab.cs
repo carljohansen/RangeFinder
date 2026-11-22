@@ -35,6 +35,8 @@ public partial class SearchTab : UserControl
 
     private TextFilePreviewMode _currentTextFilePreviewMode;
 
+    public TextFilePreviewMode CurrentTextFilePreviewMode => _currentTextFilePreviewMode;
+
     private int? _contextMenuRowIndex = null;
 
     private bool _anchorByHandInitialized = false;
@@ -657,23 +659,23 @@ public partial class SearchTab : UserControl
             return true;
         }
 
-        if (keyData == (Keys.Control | Keys.D1))
-        {
-            btnShowMatchPreview_Click(this, EventArgs.Empty);
-            return true;
-        }
+        //if (keyData == (Keys.Control | Keys.D1))
+        //{
+        //    btnShowMatchPreview_Click(this, EventArgs.Empty);
+        //    return true;
+        //}
 
-        if (keyData == (Keys.Control | Keys.D2))
-        {
-            btnShowFullPreview_Click(this, EventArgs.Empty);
-            return true;
-        }
+        //if (keyData == (Keys.Control | Keys.D2))
+        //{
+        //    btnShowFullPreview_Click(this, EventArgs.Empty);
+        //    return true;
+        //}
 
-        if (keyData == (Keys.Control | Keys.D3))
-        {
-            btnHidePreview_Click(this, EventArgs.Empty);
-            return true;
-        }
+        //if (keyData == (Keys.Control | Keys.D3))
+        //{
+        //    btnHidePreview_Click(this, EventArgs.Empty);
+        //    return true;
+        //}
 
         if (keyData == (Keys.Control | Keys.R))
         {
@@ -854,7 +856,7 @@ public partial class SearchTab : UserControl
         SetPreviewMode(TextFilePreviewMode.None);
     }
 
-    private void SetPreviewMode(TextFilePreviewMode mode)
+    public void SetPreviewMode(TextFilePreviewMode mode)
     {
         _currentTextFilePreviewMode = mode;
         spltResultPanel.Panel2Collapsed = _currentTextFilePreviewMode == TextFilePreviewMode.None;
