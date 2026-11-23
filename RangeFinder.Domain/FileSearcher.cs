@@ -47,7 +47,7 @@ public static class FileSearcher
         return notBinFiles;
     }
 
-    public static PatternMatchingResult FilterPaths(IEnumerable<string> directoryNames, PathCollection includePatterns, PathCollection excludePatterns)
+    public static PatternMatchingResult FilterFolderPaths(IEnumerable<string> directoryNames, PathCollection includePatterns, PathCollection excludePatterns)
     {
         // Create matcher and add pattern
         var matcher = new Matcher();
@@ -59,6 +59,17 @@ public static class FileSearcher
         foreach (var pattern in excludePatterns.Paths)
         {
             matcher.AddExclude(pattern);
+        }
+
+        foreach (var pattern in excludePatterns.Paths)
+        {
+            if (pattern.EndsWith(Path.AltDirectorySeparatorChar)
+                || pattern.EndsWith(Path.DirectorySeparatorChar))
+            {
+                // An exclusion of "Debug/" will exclude everything in a Debug folder, but not the folder itself.
+                var folderNameExclusionPattern = pattern[..^1];
+                matcher.AddExclude(folderNameExclusionPattern);
+            }
         }
 
         return matcher.Match(directoryNames);

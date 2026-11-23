@@ -96,7 +96,12 @@ public partial class SearchTab
             BaseDirectoriesPattern = cmbRootDir.Text,
             EnableFileExclusion = chkEnableExclusions.Checked,
             FilterByModifiedDate = chkFilterByDate.Checked,
-            IncludeFolders = chkShowHidden.Checked,
+            ObjectsToInclude = cmbObjectsToInclude.SelectedIndex switch
+            {
+                1 => ObjectSearchInclusion.FilesAndFolders,
+                2 => ObjectSearchInclusion.Folders,
+                _ => ObjectSearchInclusion.Files
+            },
             ModifiedInLastQuantity = userSearchDateFilterQty,
             ModifiedInLastQuantityType = cmbDateFilterAmountType.SelectedItem?.ToString(),
         };
@@ -133,7 +138,13 @@ public partial class SearchTab
         cmbContainingText.SelectionLength = 0;
         cmbRootDir.Text = dto.BaseDirectoriesPattern ?? "";
         chkEnableExclusions.Checked = dto.EnableFileExclusion;
-        chkShowHidden.Checked = dto.IncludeFolders;
+        cmbObjectsToInclude.SelectedIndex = dto.ObjectsToInclude switch
+        {
+            ObjectSearchInclusion.Files => 0,
+            ObjectSearchInclusion.FilesAndFolders => 1,
+            ObjectSearchInclusion.Folders => 2,
+            _ => 0
+        };
         chkMatchCase.Checked = dto.TextMatchingOptions.HasFlag(TextMatchingOptions.CaseSensitive);
         chkMatchWholeWord.Checked = dto.TextMatchingOptions.HasFlag(TextMatchingOptions.WholeWord);
         chkFilterByDate.Checked = dto.FilterByModifiedDate;
@@ -244,10 +255,12 @@ public partial class SearchTab
             switch (control)
             {
                 case TextBox textBox:
+                    if (textBox.Tag?.ToString() == "LockStyle") { break; }
                     textBox.AutoSize = false;
                     textBox.Font = new Font(inputFontFamilyName, this.Font.Size, this.Font.Style);
                     break;
                 case ComboBox comboBox:
+                    if (comboBox.Tag?.ToString() == "LockStyle") { break; }
                     comboBox.AutoSize = false;
                     comboBox.Font = new Font(inputFontFamilyName, this.Font.Size, this.Font.Style);
                     break;

@@ -7,3 +7,10 @@ public class FileSearchOptions
     /// </summary>
     public bool AutomaticTextSearchFileFiltering { get; set; }
 }
+
+public enum ObjectSearchInclusion
+{
+    Files = 0,
+    Folders = 1,
+    FilesAndFolders = 2
+}

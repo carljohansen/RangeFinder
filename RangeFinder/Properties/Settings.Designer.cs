@@ -82,5 +82,17 @@ namespace RangeFinder.Properties {
                 this["LastZipLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowingToolbar {
+            get {
+                return ((bool)(this["ShowingToolbar"]));
+            }
+            set {
+                this["ShowingToolbar"] = value;
+            }
+        }
     }
 }

@@ -127,6 +127,8 @@ public partial class SearchForm : Form
                     this.StartPosition = FormStartPosition.CenterScreen;
                 }
             }
+
+            ShowHideToolbar(Properties.Settings.Default.ShowingToolbar);
         }
 
         TextCriterionHistoryCollection.Instance.EnsureRefreshed();
@@ -354,8 +356,8 @@ public partial class SearchForm : Form
         var zipExploreUserSearchDto = new UserSearchDto()
         {
             Id = 0,
-            RawIncludeFilesPattern = null,
-            RawExcludeFilesPattern = null,
+            RawIncludeFilesPattern = "",
+            RawExcludeFilesPattern = "",
             BaseDirectoriesPattern = tempDir
         };
 
@@ -494,7 +496,7 @@ public partial class SearchForm : Form
         currentTab.GoForward();
     }
 
-    private void UpdatePreviewModeControls()
+    public void UpdatePreviewModeControls()
     {
         if (tabsMain.SelectedTab is not SearchTabPage currentTab)
         {
@@ -542,5 +544,17 @@ public partial class SearchForm : Form
 
         currentTab.SetPreviewMode(TextFilePreviewMode.None);
         UpdatePreviewModeControls();
+    }
+
+    private void mnuShowHideToolbar_Click(object sender, EventArgs e)
+    {
+        ShowHideToolbar(!mainToolStrip.Visible);
+    }
+
+    private void ShowHideToolbar(bool show)
+    {
+        mainToolStrip.Visible = show;
+        Properties.Settings.Default.ShowingToolbar = mainToolStrip.Visible;
+        mnuShowHideToolbar.Checked = mainToolStrip.Visible;
     }
 }

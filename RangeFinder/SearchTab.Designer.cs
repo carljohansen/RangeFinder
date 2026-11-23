@@ -86,7 +86,6 @@ namespace RangeFinder
             txtDateFilterAmount = new TextBox();
             cmbDateFilterAmountType = new ComboBox();
             cmbRootDir = new PredictiveComboBox();
-            chkShowHidden = new CheckBox();
             statusStrip1 = new StatusStrip();
             TabProgressBar = new ToolStripProgressBar();
             lblTabStatus = new ToolStripStatusLabel();
@@ -100,6 +99,8 @@ namespace RangeFinder
             mainToolTip = new ToolTip(components);
             pnlSearchStats = new Panel();
             txtSearchStats = new TextBox();
+            cmbObjectsToInclude = new ComboBox();
+            lblInclude = new Label();
             mnuFileItemContext.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)spltResultPanel).BeginInit();
             spltResultPanel.Panel1.SuspendLayout();
@@ -117,7 +118,7 @@ namespace RangeFinder
             btnSearch.Margin = new Padding(3, 2, 3, 2);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(82, 24);
-            btnSearch.TabIndex = 15;
+            btnSearch.TabIndex = 16;
             btnSearch.Text = "&Search";
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
@@ -319,7 +320,7 @@ namespace RangeFinder
             chkMatchCase.Margin = new Padding(3, 2, 3, 2);
             chkMatchCase.Name = "chkMatchCase";
             chkMatchCase.Size = new Size(88, 19);
-            chkMatchCase.TabIndex = 12;
+            chkMatchCase.TabIndex = 13;
             chkMatchCase.Text = "Match &Case";
             chkMatchCase.UseVisualStyleBackColor = true;
             //
@@ -331,7 +332,7 @@ namespace RangeFinder
             chkMatchWholeWord.Margin = new Padding(3, 2, 3, 2);
             chkMatchWholeWord.Name = "chkMatchWholeWord";
             chkMatchWholeWord.Size = new Size(92, 19);
-            chkMatchWholeWord.TabIndex = 13;
+            chkMatchWholeWord.TabIndex = 14;
             chkMatchWholeWord.Text = "Whole &Word";
             chkMatchWholeWord.UseVisualStyleBackColor = true;
             //
@@ -547,7 +548,7 @@ namespace RangeFinder
             chkEnableExclusions.Margin = new Padding(3, 2, 3, 2);
             chkEnableExclusions.Name = "chkEnableExclusions";
             chkEnableExclusions.Size = new Size(61, 19);
-            chkEnableExclusions.TabIndex = 14;
+            chkEnableExclusions.TabIndex = 15;
             chkEnableExclusions.Text = "E&nable";
             chkEnableExclusions.UseVisualStyleBackColor = true;
             chkEnableExclusions.CheckedChanged += chkEnableExclusions_CheckedChanged;
@@ -559,7 +560,7 @@ namespace RangeFinder
             btnCancelSearch.Margin = new Padding(3, 2, 3, 2);
             btnCancelSearch.Name = "btnCancelSearch";
             btnCancelSearch.Size = new Size(82, 24);
-            btnCancelSearch.TabIndex = 16;
+            btnCancelSearch.TabIndex = 17;
             btnCancelSearch.Text = "Sto&p";
             btnCancelSearch.UseVisualStyleBackColor = true;
             btnCancelSearch.Click += btnCancelSearch_Click;
@@ -567,7 +568,7 @@ namespace RangeFinder
             // chkFilterByDate
             //
             chkFilterByDate.AutoSize = true;
-            chkFilterByDate.Location = new Point(369, 142);
+            chkFilterByDate.Location = new Point(329, 142);
             chkFilterByDate.Margin = new Padding(3, 2, 3, 2);
             chkFilterByDate.Name = "chkFilterByDate";
             chkFilterByDate.Size = new Size(128, 19);
@@ -578,7 +579,7 @@ namespace RangeFinder
             //
             // txtDateFilterAmount
             //
-            txtDateFilterAmount.Location = new Point(509, 140);
+            txtDateFilterAmount.Location = new Point(469, 140);
             txtDateFilterAmount.Margin = new Padding(3, 2, 3, 2);
             txtDateFilterAmount.Name = "txtDateFilterAmount";
             txtDateFilterAmount.Size = new Size(38, 23);
@@ -591,7 +592,7 @@ namespace RangeFinder
             cmbDateFilterAmountType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbDateFilterAmountType.FormattingEnabled = true;
             cmbDateFilterAmountType.Items.AddRange(new object[] { "hours", "days", "weeks", "months", "years" });
-            cmbDateFilterAmountType.Location = new Point(552, 138);
+            cmbDateFilterAmountType.Location = new Point(512, 138);
             cmbDateFilterAmountType.Margin = new Padding(3, 2, 3, 2);
             cmbDateFilterAmountType.Name = "cmbDateFilterAmountType";
             cmbDateFilterAmountType.Size = new Size(75, 23);
@@ -610,16 +611,6 @@ namespace RangeFinder
             cmbRootDir.TextUpdate += cmbRootDir_TextUpdate;
             cmbRootDir.SelectedValueChanged += cmbRootDir_SelectedValueChanged;
             cmbRootDir.Enter += cmbRootDir_Enter;
-            //
-            // chkShowHidden
-            //
-            chkShowHidden.AutoSize = true;
-            chkShowHidden.Location = new Point(649, 143);
-            chkShowHidden.Name = "chkShowHidden";
-            chkShowHidden.Size = new Size(106, 19);
-            chkShowHidden.TabIndex = 11;
-            chkShowHidden.Text = "Include Fol&ders";
-            chkShowHidden.UseVisualStyleBackColor = true;
             //
             // statusStrip1
             //
@@ -674,7 +665,7 @@ namespace RangeFinder
             btnShowMatchPreview.Location = new Point(797, 142);
             btnShowMatchPreview.Name = "btnShowMatchPreview";
             btnShowMatchPreview.Size = new Size(25, 25);
-            btnShowMatchPreview.TabIndex = 17;
+            btnShowMatchPreview.TabIndex = 18;
             mainToolTip.SetToolTip(btnShowMatchPreview, "Show Matching Text Preview (Ctrl+1)");
             btnShowMatchPreview.UseVisualStyleBackColor = true;
             btnShowMatchPreview.Click += btnShowMatchPreview_Click;
@@ -696,7 +687,7 @@ namespace RangeFinder
             btnShowFullPreview.Location = new Point(825, 142);
             btnShowFullPreview.Name = "btnShowFullPreview";
             btnShowFullPreview.Size = new Size(25, 25);
-            btnShowFullPreview.TabIndex = 18;
+            btnShowFullPreview.TabIndex = 19;
             mainToolTip.SetToolTip(btnShowFullPreview, "Show Full Text Preview (Ctrl+2)");
             btnShowFullPreview.UseVisualStyleBackColor = true;
             btnShowFullPreview.Click += btnShowFullPreview_Click;
@@ -710,7 +701,7 @@ namespace RangeFinder
             btnHidePreview.Location = new Point(853, 142);
             btnHidePreview.Name = "btnHidePreview";
             btnHidePreview.Size = new Size(25, 25);
-            btnHidePreview.TabIndex = 19;
+            btnHidePreview.TabIndex = 20;
             mainToolTip.SetToolTip(btnHidePreview, "Hide Preview Pane (Ctrl+3)");
             btnHidePreview.UseVisualStyleBackColor = true;
             btnHidePreview.Click += btnHidePreview_Click;
@@ -736,16 +727,37 @@ namespace RangeFinder
             txtSearchStats.Size = new Size(26, 20);
             txtSearchStats.TabIndex = 0;
             //
+            // cmbObjectsToInclude
+            //
+            cmbObjectsToInclude.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbObjectsToInclude.FormattingEnabled = true;
+            cmbObjectsToInclude.Items.AddRange(new object[] { "Files", "File And Folders", "Folders" });
+            cmbObjectsToInclude.Location = new Point(671, 140);
+            cmbObjectsToInclude.Name = "cmbObjectsToInclude";
+            cmbObjectsToInclude.Size = new Size(124, 23);
+            cmbObjectsToInclude.TabIndex = 12;
+            cmbObjectsToInclude.Tag = "LockStyle";
+            //
+            // lblInclude
+            //
+            lblInclude.AutoSize = true;
+            lblInclude.Location = new Point(616, 143);
+            lblInclude.Name = "lblInclude";
+            lblInclude.Size = new Size(49, 15);
+            lblInclude.TabIndex = 11;
+            lblInclude.Text = "Inclu&de:";
+            //
             // SearchTab
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(lblInclude);
+            Controls.Add(cmbObjectsToInclude);
             Controls.Add(pnlSearchStats);
             Controls.Add(btnHidePreview);
             Controls.Add(btnShowFullPreview);
             Controls.Add(btnShowMatchPreview);
             Controls.Add(statusStrip1);
-            Controls.Add(chkShowHidden);
             Controls.Add(cmbRootDir);
             Controls.Add(cmbExceptFilePattern);
             Controls.Add(cmbDateFilterAmountType);
@@ -815,7 +827,6 @@ namespace RangeFinder
         private ToolStripMenuItem mnuCopyFolderPath;
         private ContextMenuStrip mnuTextMatchContext;
         private ToolStripMenuItem mnuTextMatchLineCopy;
-        private CheckBox chkShowHidden;
         private StatusStrip statusStrip1;
         private ToolStripProgressBar TabProgressBar;
         private ToolStripStatusLabel lblTabStatus;
@@ -854,5 +865,7 @@ namespace RangeFinder
         private TextBox txtLineGrab;
         private Panel pnlSearchStats;
         private TextBox txtSearchStats;
+        private ComboBox cmbObjectsToInclude;
+        private Label lblInclude;
     }
 }

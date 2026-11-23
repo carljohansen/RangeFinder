@@ -6,6 +6,7 @@ public record FileLinePlainPreview(string Line, int LineNumber) : IFileLineDispl
 
     public MatchSegmentDisplay[] GetSegments()
     {
-        return [new(Line, 1)];
+        var previewText = MatchingLineDisplayElider.ElideStringToFit(Line, 200, ElidingAction.ElideEnd);
+        return [new(previewText, 1)];
     }
 }

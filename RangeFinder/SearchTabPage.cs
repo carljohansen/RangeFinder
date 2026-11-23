@@ -44,6 +44,11 @@ public class SearchTabPage : TabPage
         _searchTab.Width = this.Width;
         _searchTab.Height = this.Height;
         HeaderColor = initialHeaderColour ?? default;
+
+        _searchTab.PreviewModeChanged += (s, e) =>
+        {
+            _parentForm.UpdatePreviewModeControls();
+        };
     }
 
     public UserTabSettings GetCurrentUserSettings() => _searchTab.GetCurrentUserSettings();

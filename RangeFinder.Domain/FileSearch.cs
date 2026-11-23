@@ -162,8 +162,7 @@ public class FileSearch
 
         var wasCancelled = false;
 
-        if (searchDto.IncludeFolders
-            && !searchDto.HasTextSearch())
+        if (searchDto.IncludeFolders)
         {
             _progressCallback?.Report(new SearchProgressReportArgs { StatusMessage = "Building directory list", ProgressPercentage = -1 });
 
@@ -173,7 +172,7 @@ public class FileSearch
                 return FileSearchStatus.Cancelled;
             }
 
-            var filteredFolderList = FileSearcher.FilterPaths(unfilteredFolderList.DirectoryNames, searchPatternCollection, excludeSearchPatternCollection);
+            var filteredFolderList = FileSearcher.FilterFolderPaths(unfilteredFolderList.DirectoryNames, searchPatternCollection, excludeSearchPatternCollection);
             foreach (var matchingDir in filteredFolderList.Files)
             {
                 var folderDisplay = FileDisplay.CreateFolder(matchingDir.Path, searchDto.GetNormalizedBaseDirectory(), _fileLocationRepository);
@@ -181,33 +180,36 @@ public class FileSearch
             }
         }
 
-        try
+        if (searchDto.IncludeFiles)
         {
-            await foreach (var item in SearchFilesAsync(searchDto.GetNormalizedBaseDirectory(),
-                                                                        searchPatternCollection,
-                                                                        excludeSearchPatternCollection,
-                                                                        cancellationToken))
+            try
             {
-                item.InitializeMetadata();
-                item.AddToDataTable(DataTable);
-            }
-        }
-        catch (TaskCanceledException)
-        {
-            wasCancelled = true;
-            if (_rawFileCount.HasValue)
-            {
-                _progressCallback?.Report(new SearchProgressReportArgs
+                await foreach (var item in SearchFilesAsync(searchDto.GetNormalizedBaseDirectory(),
+                                                                            searchPatternCollection,
+                                                                            excludeSearchPatternCollection,
+                                                                            cancellationToken))
                 {
-                    StatusMessage = "Cancelled",
-                    SearchCompletionStats = new(_rawFileCount.Value),
-                    ProgressPercentage = 0
-                });
+                    item.InitializeMetadata();
+                    item.AddToDataTable(DataTable);
+                }
             }
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return FileSearchStatus.UnauthorizedEx;
+            catch (TaskCanceledException)
+            {
+                wasCancelled = true;
+                if (_rawFileCount.HasValue)
+                {
+                    _progressCallback?.Report(new SearchProgressReportArgs
+                    {
+                        StatusMessage = "Cancelled",
+                        SearchCompletionStats = new(_rawFileCount.Value),
+                        ProgressPercentage = 0
+                    });
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return FileSearchStatus.UnauthorizedEx;
+            }
         }
 
         wasCancelled |= cancellationToken.IsCancellationRequested;

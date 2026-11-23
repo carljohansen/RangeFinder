@@ -90,6 +90,16 @@ public static class MatchingLineDisplayElider
         return rawLine;
     }
 
+    internal static string ElideStringToFit(string s, int maxLength, ElidingAction elidingAction)
+    {
+        if (s.Length <= maxLength)
+        {
+            return s;
+        }
+        var numCharsToRemove = s.Length - maxLength;
+        return ElideString(s, numCharsToRemove, elidingAction);
+    }
+
     internal static string ElideString(string s, int numCharsToRemove, ElidingAction elidingAction)
     {
         if (numCharsToRemove <= 0 || numCharsToRemove >= s.Length)

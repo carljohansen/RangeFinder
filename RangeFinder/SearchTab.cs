@@ -25,11 +25,13 @@ public partial class SearchTab : UserControl
         set
         {
             field = value;
-            HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
+            SimulateGridRowEnterForCurrentRow();
         }
     } = 1;
 
     public event EventHandler<FilesFoundUpdateEventArgs>? FilesFoundUpdate;
+
+    public event EventHandler? PreviewModeChanged;
 
     private readonly FileSearch _currentSearch;
 
@@ -86,9 +88,17 @@ public partial class SearchTab : UserControl
             SetStatusText("Invalid search directory");
             return;
         }
+        else if (!searchDto.IsValidCriteriaCombination())
+        {
+            cmbContainingText.BackColor = Color.Pink;
+            cmbContainingText.Focus();
+            SetStatusText("Can't search for text in folders");
+            return;
+        }
         else
         {
             cmbRootDir.BackColor = default;
+            cmbContainingText.BackColor = default;
             grdResult.Focus();
         }
 
@@ -501,8 +511,9 @@ public partial class SearchTab : UserControl
 
         chkFilterByDate.Left = txtDateFilterAmount.Left - chkFilterByDate.Width;
         AlignBaselines(txtDateFilterAmount, chkFilterByDate);
-        chkShowHidden.Top = chkFilterByDate.Top;
-        chkShowHidden.Height = chkFilterByDate.Height;
+        cmbObjectsToInclude.Top = cmbDateFilterAmountType.Top;
+        cmbObjectsToInclude.Height = cmbDateFilterAmountType.Height;
+        lblInclude.Top = chkFilterByDate.Top;
 
         lstTextMatches.Columns.Add(lineNumberHeader);
         lstTextMatches.Columns.Add(matchingTextHeader);
@@ -837,7 +848,6 @@ public partial class SearchTab : UserControl
         }
 
         SetPreviewMode(TextFilePreviewMode.MatchPreview);
-        HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
     }
 
     private void btnShowFullPreview_Click(object sender, EventArgs e)
@@ -848,7 +858,6 @@ public partial class SearchTab : UserControl
         }
 
         SetPreviewMode(TextFilePreviewMode.FullPreview);
-        HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
     }
 
     private void btnHidePreview_Click(object sender, EventArgs e)
@@ -860,6 +869,13 @@ public partial class SearchTab : UserControl
     {
         _currentTextFilePreviewMode = mode;
         spltResultPanel.Panel2Collapsed = _currentTextFilePreviewMode == TextFilePreviewMode.None;
+        PreviewModeChanged?.Invoke(this, EventArgs.Empty);
+        SimulateGridRowEnterForCurrentRow();
+    }
+
+    private void SimulateGridRowEnterForCurrentRow()
+    {
+        HandleGridRowEnter(grdResult.CurrentCell?.RowIndex ?? -1);
     }
 
     private void mnuUseAsBaseDir_Click(object sender, EventArgs e)

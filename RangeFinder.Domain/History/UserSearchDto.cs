@@ -50,7 +50,11 @@ public class UserSearchDto : IEquatable<UserSearchDto>
 
     public bool FilterByModifiedDate { get; set; }
 
-    public bool IncludeFolders { get; set; }
+    public ObjectSearchInclusion ObjectsToInclude { get; set; }
+
+    public bool IncludeFolders => ObjectsToInclude is ObjectSearchInclusion.Folders or ObjectSearchInclusion.FilesAndFolders;
+
+    public bool IncludeFiles => ObjectsToInclude is ObjectSearchInclusion.Files or ObjectSearchInclusion.FilesAndFolders;
 
     public float? ModifiedInLastQuantity { get; set; }
 
@@ -128,6 +132,17 @@ public class UserSearchDto : IEquatable<UserSearchDto>
                && Directory.Exists(GetNormalizedBaseDirectory());
     }
 
+    public bool IsValidCriteriaCombination()
+    {
+        if (HasTextSearch()
+            && ObjectsToInclude != ObjectSearchInclusion.Files)
+        {
+            // Can't search for text in folders.
+            return false;
+        }
+        return true;
+    }
+
     public static UserSearchDto CreateDefault() => new()
     {
         Id = 0,
@@ -135,7 +150,7 @@ public class UserSearchDto : IEquatable<UserSearchDto>
         RawIncludeFilesPattern = "",
         RawExcludeFilesPattern = "",
         EnableFileExclusion = false,
-        IncludeFolders = false,
+        ObjectsToInclude = ObjectSearchInclusion.Files,
         FilterByModifiedDate = false
     };
 
@@ -250,7 +265,7 @@ public class UserSearchDto : IEquatable<UserSearchDto>
                && RawIncludeFilesPattern == other.RawIncludeFilesPattern
                && RawExcludeFilesPattern == other.RawExcludeFilesPattern
                && EnableFileExclusion == other.EnableFileExclusion
-               && IncludeFolders == other.IncludeFolders
+               && ObjectsToInclude == other.ObjectsToInclude
                && FilterByModifiedDate == other.FilterByModifiedDate
                && ModifiedInLastQuantity == other.ModifiedInLastQuantity
                && ModifiedInLastQuantityType == other.ModifiedInLastQuantityType
