@@ -119,7 +119,6 @@ public partial class SearchTab : UserControl
 
         if (searchDto.HasTextSearch())
         {
-            btnShowMatchPreview.Enabled = true;
             if (spltResultPanel.Panel2Collapsed)
             {
                 SetPreviewMode(TextFilePreviewMode.MatchPreview);
@@ -129,7 +128,6 @@ public partial class SearchTab : UserControl
         }
         else
         {
-            btnShowMatchPreview.Enabled = false;
             if (!spltResultPanel.Panel2Collapsed)
             {
                 SetPreviewMode(TextFilePreviewMode.None);
