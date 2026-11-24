@@ -35,7 +35,7 @@ namespace RangeFinder
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchTab));
             btnSearch = new Button();
             cmbFilePattern = new ComboBox();
-            cmbContainingText = new PredictiveComboBox();
+            cmbContainingText = new ComboBox();
             mnuFileItemContext = new ContextMenuStrip(components);
             mnuOpenFile = new ToolStripMenuItem();
             mnuOpenWithTextEditor = new ToolStripMenuItem();
@@ -132,12 +132,13 @@ namespace RangeFinder
             // cmbContainingText
             // 
             cmbContainingText.Anchor = AnchorStyles.Top;
+            cmbContainingText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbContainingText.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbContainingText.Location = new Point(109, 72);
             cmbContainingText.Margin = new Padding(3, 2, 3, 2);
             cmbContainingText.Name = "cmbContainingText";
             cmbContainingText.Size = new Size(638, 23);
             cmbContainingText.TabIndex = 5;
-            cmbContainingText.TextUpdate += cmbContainingText_TextUpdate;
             // 
             // mnuFileItemContext
             // 
@@ -755,7 +756,7 @@ namespace RangeFinder
 
         private Button btnSearch;
         private ComboBox cmbFilePattern;
-        private PredictiveComboBox cmbContainingText;
+        private ComboBox cmbContainingText;
         private CheckBox chkMatchCase;
         private CheckBox chkMatchWholeWord;
         private Label label1;

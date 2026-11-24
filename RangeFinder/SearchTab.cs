@@ -829,15 +829,6 @@ public partial class SearchTab : UserControl
         PopulateHistoryDropdowns();
     }
 
-    private void cmbContainingText_TextUpdate(object sender, EventArgs e)
-    {
-        var currSearchText = cmbContainingText.Text;
-
-        var possibleContinuations = TextCriterionHistoryCollection.Instance.SearchTextHistory.GetPossibleContinuations(currSearchText);
-
-        cmbContainingText.PopulateDropdown(TextCriterionHistoryCollection.Instance.SearchTextHistory, possibleContinuations);
-    }
-
     private void btnShowMatchPreview_Click(object sender, EventArgs e)
     {
         if (_currentTextFilePreviewMode == TextFilePreviewMode.MatchPreview)
