@@ -119,8 +119,8 @@ public static class MatchingLineDisplayElider
     private static string RemoveFromMiddle(string s, int numCharsToRemove)
     {
         var lhsSize = (s.Length - numCharsToRemove) / 2;
-        var rhsSize = numCharsToRemove - lhsSize;
-        return s[..lhsSize] + EliderConstants.Ellipsis + s[rhsSize..];
+        var rhsSize = s.Length - lhsSize - numCharsToRemove;
+        return s[..lhsSize] + EliderConstants.Ellipsis + s[^rhsSize..];
     }
 }
 
