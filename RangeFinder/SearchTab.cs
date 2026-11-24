@@ -929,6 +929,16 @@ public partial class SearchTab : UserControl
     private void grdResult_SelectionChanged(object sender, EventArgs e)
     {
         var selectedRows = grdResult.SelectedRows;
+
+        if (selectedRows.Count > 1)
+        {
+            SetStatusText($"{selectedRows.Count} items selected");
+        }
+        else if (GetStatusText()?.Contains("items selected") ?? false)
+        {
+            ClearStatusText();
+        }
+
         if (selectedRows.Count != 1)
         {
             return;

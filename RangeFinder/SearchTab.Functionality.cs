@@ -204,6 +204,11 @@ public partial class SearchTab
         }
     }
 
+    private string? GetStatusText()
+    {
+        return lblTabStatus.Text;
+    }
+
     private void SetStatusText(string text)
     {
         lblTabStatus.Text = text;
