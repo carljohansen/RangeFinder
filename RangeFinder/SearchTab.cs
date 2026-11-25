@@ -4,6 +4,8 @@ using RangeFinder.Domain.FileType;
 using RangeFinder.Domain.History;
 using RangeFinder.Domain.TextFileDetection;
 using RangeFinder.Domain.TextSearch;
+using RangeFinder.Domain.Utilities;
+using RangeFinder.Extensions;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
@@ -34,6 +36,8 @@ public partial class SearchTab : UserControl
     public event EventHandler? PreviewModeChanged;
 
     private readonly FileSearch _currentSearch;
+
+    private readonly ListIncrementalSearcher _listIncrementalSearcher = new();
 
     private TextFilePreviewMode _currentTextFilePreviewMode;
 
@@ -668,24 +672,6 @@ public partial class SearchTab : UserControl
             return true;
         }
 
-        //if (keyData == (Keys.Control | Keys.D1))
-        //{
-        //    btnShowMatchPreview_Click(this, EventArgs.Empty);
-        //    return true;
-        //}
-
-        //if (keyData == (Keys.Control | Keys.D2))
-        //{
-        //    btnShowFullPreview_Click(this, EventArgs.Empty);
-        //    return true;
-        //}
-
-        //if (keyData == (Keys.Control | Keys.D3))
-        //{
-        //    btnHidePreview_Click(this, EventArgs.Empty);
-        //    return true;
-        //}
-
         if (keyData == (Keys.Control | Keys.R))
         {
             // Ctrl+R = put focus on Result list.
@@ -999,5 +985,10 @@ public partial class SearchTab : UserControl
         pnlSearchStats.Left = Width - pnlSearchStats.Width - 10;
         pnlSearchStats.Top = statusStrip1.Top - pnlSearchStats.Height - 10;
         txtSearchStats.Text = lblFilesFound.ToolTipText;
+    }
+
+    private void grdResult_KeyPress(object sender, KeyPressEventArgs e)
+    {
+        _listIncrementalSearcher.SearchInGrid(e.KeyChar, grdResult, 1);
     }
 }
