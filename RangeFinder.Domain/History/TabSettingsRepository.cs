@@ -22,7 +22,13 @@ public static class TabSettingsRepository
 
     public static void SaveTabSettings(UserTabSettings dto)
     {
-        SaveTabSettings(dto, GetFileName(dto.Id));
+        var id = dto.Id;
+        if (UserSearchStackRepository.GetSearchStackFileName(id) == null)
+        {
+            return;
+        }
+
+        SaveTabSettings(dto, GetFileName(id));
     }
 
     private static string GetFileName(int id) => $"tabpref_{id:000}";

@@ -2,6 +2,11 @@
 
 public class LineTextMatcher(AtomicTextMatch TextMatch)
 {
+    // TODO: Put this behind an interface ILineTextMatcher that exposes HasMatchOnLine and GetMatch and IsExclusion.
+    // Then a new impl: SameLineTextMatcher, where GetMatch returns a FileLineTextMultiMatch
+
+    // FileMatcher.Matchers will be a set of ILineTextMatchers
+
     public bool IsExclusion => TextMatch.IsExclusion;
 
     public bool HasMatchOnLine(string line)

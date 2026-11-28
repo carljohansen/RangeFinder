@@ -30,7 +30,7 @@ public record UserTabState(TabSearchHistory TabSearchHistory, UserTabSettings Ta
 {
     public UserSearchDto SearchDto => TabSearchHistory.GetCurrent();
 
-    public int Id => SearchDto.Id;
+    public int Id => TabSearchHistory.Id;
 
     public static UserTabState CreateDefault() => new(TabSearchHistory.CreateDefault(), UserTabSettings.CreateDefault());
 

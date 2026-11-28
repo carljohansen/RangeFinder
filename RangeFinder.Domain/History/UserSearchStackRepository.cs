@@ -21,10 +21,16 @@ public static class UserSearchStackRepository
 
     private static string GetFileName(int id) => $"tab_{id:000}";
 
-    public static void DeleteSearchStack(int index)
+    public static string? GetSearchStackFileName(int index)
     {
         var fileName = UserSearchRepository.GetDtoFileName(GetFileName(index));
-        if (File.Exists(fileName))
+        return File.Exists(fileName) ? fileName : null;
+    }
+
+    public static void DeleteSearchStack(int index)
+    {
+        var fileName = GetSearchStackFileName(index);
+        if (fileName != null)
         {
             File.Delete(fileName);
         }
